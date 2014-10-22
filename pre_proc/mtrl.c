@@ -9,6 +9,12 @@ MTRL *mtrl_create(int mtrl_id,
 		  double *vsf,
 		  double **ss)
 {
+	#ifdef DEBUG
+	if(mtrl_id < 0){
+		fprintf(stderr, "Material ID must be positive.\n");
+		exit(-1);
+	}
+	#endif
 	MTRL *mtrl = malloc(sizeof(MTRL));
 	mtrl->mtrl_id = mtrl_id;
 	mtrl->chi = malloc(EGSIZE * sizeof(double));

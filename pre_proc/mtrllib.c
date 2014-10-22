@@ -23,6 +23,12 @@ void mtrllib_add(MTRLLIB *mlib, MTRL *mtrl)
 
 void mtrllib_remove_fromid(MTRLLIB *mlib, int mtrl_id)
 {
+	#ifdef DEBUG
+	if(mtrl_id < 0){
+		fprintf(stderr, "Material ID must be positive.\n");
+		exit(-1);
+	}
+	#endif
 	size_t index = 0;
 	struct NODE *cur_node = mlib->head;
 	while(cur_node != NULL){
@@ -41,6 +47,12 @@ void mtrllib_remove_fromid(MTRLLIB *mlib, int mtrl_id)
 
 MTRL *mtrllib_get_fromid(const MTRLLIB *mlib, int mtrl_id)
 {
+	#ifdef DEBUG
+	if(mtrl_id < 0){
+		fprintf(stderr, "Material ID must be positive.\n");
+		exit(-1);
+	}
+	#endif
 	struct NODE *cur_node = mlib->head;
 	while(cur_node != NULL){
 		if(cur_node->data->mtrl_id == mtrl_id)
