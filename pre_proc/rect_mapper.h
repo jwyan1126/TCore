@@ -17,7 +17,7 @@ typedef struct
 typedef struct
 {
 	XYZ_IDX *one2three;
-	size_t ***three2one;
+	size_t ***three2one; //indexed [k][j][i]
 } RECT_MAPPER;
 
 RECT_MAPPER *rect_mapper_create();
@@ -26,7 +26,7 @@ void rect_mapper_free(RECT_MAPPER *rect_mapper);
 
 XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D);
 
-size_t rect_mapper_get1Didx(RECT_MAPPER *mapper, XYZ_IDX idx3D);
+size_t rect_mapper_get1Didx(RECT_MAPPER *mapper,size_t i, size_t j, size_t k);
 
 
 #endif

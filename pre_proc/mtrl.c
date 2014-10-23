@@ -20,6 +20,7 @@ MTRL *mtrl_create(int mtrl_id,
 	mtrl->chi = malloc(EGSIZE * sizeof(double));
 	mtrl->dcoef = malloc(EGSIZE * sizeof(double));
 	mtrl->sa = malloc(EGSIZE * sizeof(double));
+	mtrl->sr = malloc(EGSIZE * sizeof(double));
 	mtrl->vsf = malloc(EGSIZE * sizeof(double));
 	mtrl->ss = malloc(EGSIZE * sizeof(double *));
 	for(size_t g=0; g<EGSIZE; ++g)
@@ -28,9 +29,13 @@ MTRL *mtrl_create(int mtrl_id,
 		mtrl->chi[g] = chi[g];
 		mtrl->dcoef[g] = dcoef[g];
 		mtrl->sa[g] = sa[g];
+		mtrl->sr[g] = sa[g];
 		mtrl->vsf[g] = vsf[g];
-		for(size_t bg=0; bg<EGSIZE; ++bg)
+		for(size_t bg=0; bg<EGSIZE; ++bg){
 			mtrl->ss[g][bg] = ss[g][bg];
+			if(g != bg)
+				mtrl->sr[g] += ss[bg][g];
+		}
 	}
 	return mtrl;
 }
@@ -40,6 +45,7 @@ void mtrl_free(MTRL *m)
 	free(m->chi);
 	free(m->dcoef);
 	free(m->sa);
+	free(m->sr);
 	free(m->vsf);
 	for(size_t i=0; i<EGSIZE; ++i)
 		free(m->ss[i]);
@@ -84,6 +90,17 @@ inline double mtrl_get_sa(const MTRL *m, size_t g)
 	}
 	#endif
 	return m->sa[g];
+}
+
+inline double mtrl_get_sr(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	if(g >= EGSIZE){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->sr[g];
 }
 
 inline double mtrl_get_vsf(const MTRL *m, size_t g)

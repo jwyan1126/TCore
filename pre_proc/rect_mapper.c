@@ -25,7 +25,7 @@ void rect_mapper_free(RECT_MAPPER *mapper)
 	free(mapper);
 }
 
-XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D)
+inline XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D)
 {
 	#ifdef DEBUG
 	if(idx1D >= RT_SIZE){
@@ -36,10 +36,10 @@ XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D)
 	return mapper->one2three[idx1D];
 }
 
-size_t rect_mapper_get1Didx(RECT_MAPPER *mapper, XYZ_IDX idx3D)
+inline size_t rect_mapper_get1Didx(RECT_MAPPER *mapper, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(idx3D.xi >= XM_SIZE || idx3D.yi >= YM_SIZE || idx3D.zi >= ZM_SIZE){
+	if(i >= XM_SIZE || j >= YM_SIZE || k >= ZM_SIZE){
 		fprintf(stderr, "'idx3D' out of range.\n");
 		exit(-1);
 	}

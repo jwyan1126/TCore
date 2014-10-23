@@ -11,6 +11,7 @@ typedef struct
 	double *chi;
 	double *dcoef;
 	double *sa;
+	double *sr;
 	double *vsf;
 	double **ss;
 } MTRL;
@@ -31,6 +32,8 @@ double mtrl_get_chi(const MTRL *m, size_t g);
 double mtrl_get_dcoef(const MTRL *m, size_t g);
 
 double mtrl_get_sa(const MTRL *m, size_t g);
+
+double mtrl_get_sr(const MTRL *m, size_t g);
 
 double mtrl_get_vsf(const MTRL *m, size_t g);
 

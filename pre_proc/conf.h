@@ -17,12 +17,12 @@ typedef struct
 	size_t *yspan_subdiv; // num of sub-division of each span in y direction
 	size_t *zspan_subdiv; // num of sub-division of each span in z direction
 
-	double *xl_bdy; // albedos of each energy group in XL boundary
-	double *xr_bdy; // albedos of each energy group in XR boundary
-	double *yl_bdy; // albedos of each energy group in YL boundary
-	double *yr_bdy; // albedos of each energy group in YR boundary
-	double *zl_bdy; // albedos of each energy group in ZL boundary
-	double *zr_bdy; // albedos of each energy group in ZR boundary
+	double xl_bdy; // albedos of each energy group in XL boundary
+	double xr_bdy; // albedos of each energy group in XR boundary
+	double yl_bdy; // albedos of each energy group in YL boundary
+	double yr_bdy; // albedos of each energy group in YR boundary
+	double zl_bdy; // albedos of each energy group in ZL boundary
+	double zr_bdy; // albedos of each energy group in ZR boundary
 	
 	int ***mtrl_set; // setting of materials in each spanned block
 	MTRLLIB *mtrllib; // material library
@@ -32,5 +32,7 @@ typedef struct
 SCONF *sconf_create(INPUT *input);
 
 void sconf_free(SCONF *sconf);
+
+
 
 #endif
