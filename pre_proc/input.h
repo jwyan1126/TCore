@@ -1,6 +1,9 @@
 #ifndef INPUT_H
 #define INPUT_H
 
+#include"mtrllib.h"
+#include<stddef.h>
+
 typedef struct
 {
 	size_t eg_size;
@@ -27,6 +30,8 @@ typedef struct
 
 INPUT *input_create(const char *path);
 
-input_free(INPUT *input);
+void input_free(INPUT *input);
+
+void input_fprintf(const INPUT *input, FILE *stream);
 
 #endif

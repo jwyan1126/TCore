@@ -3,6 +3,7 @@
 #include<stdlib.h>
 
 MTRL *mtrl_create(int mtrl_id,
+		  size_t eg_size,
 		  double *chi,
 		  double *dcoef,
 		  double *sa,
@@ -17,21 +18,22 @@ MTRL *mtrl_create(int mtrl_id,
 	#endif
 	MTRL *mtrl = malloc(sizeof(MTRL));
 	mtrl->mtrl_id = mtrl_id;
-	mtrl->chi = malloc(EGSIZE * sizeof(double));
-	mtrl->dcoef = malloc(EGSIZE * sizeof(double));
-	mtrl->sa = malloc(EGSIZE * sizeof(double));
-	mtrl->sr = malloc(EGSIZE * sizeof(double));
-	mtrl->vsf = malloc(EGSIZE * sizeof(double));
-	mtrl->ss = malloc(EGSIZE * sizeof(double *));
-	for(size_t g=0; g<EGSIZE; ++g)
-		mtrl->ss[g] = malloc(EGSIZE * sizeof(double));
-	for(size_t g=0; g<EGSIZE; ++g){
+	mtrl->eg_size = eg_size;
+	mtrl->chi = malloc(eg_size * sizeof(double));
+	mtrl->dcoef = malloc(eg_size * sizeof(double));
+	mtrl->sa = malloc(eg_size * sizeof(double));
+	mtrl->sr = malloc(eg_size * sizeof(double));
+	mtrl->vsf = malloc(eg_size * sizeof(double));
+	mtrl->ss = malloc(eg_size * sizeof(double *));
+	for(size_t g=0; g<eg_size; ++g)
+		mtrl->ss[g] = malloc(eg_size * sizeof(double));
+	for(size_t g=0; g<eg_size; ++g){
 		mtrl->chi[g] = chi[g];
 		mtrl->dcoef[g] = dcoef[g];
 		mtrl->sa[g] = sa[g];
 		mtrl->sr[g] = sa[g];
 		mtrl->vsf[g] = vsf[g];
-		for(size_t bg=0; bg<EGSIZE; ++bg){
+		for(size_t bg=0; bg<eg_size; ++bg){
 			mtrl->ss[g][bg] = ss[g][bg];
 			if(g != bg)
 				mtrl->sr[g] += ss[bg][g];
@@ -47,10 +49,44 @@ void mtrl_free(MTRL *m)
 	free(m->sa);
 	free(m->sr);
 	free(m->vsf);
-	for(size_t i=0; i<EGSIZE; ++i)
+	size_t eg_size = m->eg_size;
+	for(size_t i=0; i<eg_size; ++i)
 		free(m->ss[i]);
 	free(m->ss);
 	free(m);
+}
+
+void mtrl_fprintf(const MTRL *m, FILE *stream)
+{
+	size_t eg_size = m->eg_size;
+	fprintf(stream, "MTRL_ID:%4d\n", m->mtrl_id);
+	fprintf(stream, "CHI:\n");
+	for(size_t g=0; g<eg_size; ++g)
+		fprintf(stream, "%4g\t", m->chi[g]);
+	fprintf(stream, "\n");
+	
+	fprintf(stream, "DCOEF:\n");
+	for(size_t g=0; g<eg_size; ++g)
+		fprintf(stream, "%4g\t", m->dcoef[g]);
+	fprintf(stream, "\n");
+
+	fprintf(stream, "SA:\n");
+	for(size_t g=0; g<eg_size; ++g)
+		fprintf(stream, "%4g\t", m->sa[g]);
+	fprintf(stream, "\n");
+
+	fprintf(stream, "VSF:\n");
+	for(size_t g=0; g<eg_size; ++g)
+		fprintf(stream, "%4g\t", m->vsf[g]);
+	fprintf(stream, "\n");
+
+	fprintf(stream, "SS:\n");
+	for(size_t g=0; g<eg_size; ++g){
+		for(size_t from_g=0; from_g<eg_size; ++from_g)
+			fprintf(stream, "%4g\t", m->ss[g][from_g]);
+		fprintf(stream, "\n");
+	}
+	fprintf(stream, "\n");
 }
 
 inline int mtrl_get_id(const MTRL *m)
@@ -61,7 +97,8 @@ inline int mtrl_get_id(const MTRL *m)
 inline double mtrl_get_chi(const MTRL *m, size_t g)
 {
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -72,7 +109,8 @@ inline double mtrl_get_chi(const MTRL *m, size_t g)
 inline double mtrl_get_dcoef(const MTRL *m, size_t g)
 {
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -84,7 +122,8 @@ inline double mtrl_get_sa(const MTRL *m, size_t g)
 {
 	
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -95,7 +134,8 @@ inline double mtrl_get_sa(const MTRL *m, size_t g)
 inline double mtrl_get_sr(const MTRL *m, size_t g)
 {
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -106,7 +146,8 @@ inline double mtrl_get_sr(const MTRL *m, size_t g)
 inline double mtrl_get_vsf(const MTRL *m, size_t g)
 {
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -117,7 +158,8 @@ inline double mtrl_get_vsf(const MTRL *m, size_t g)
 inline double mtrl_get_ss(const MTRL *m, size_t g, size_t from_g)
 {
 	#ifdef DEBUG
-	if(g >= EGSIZE){
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}

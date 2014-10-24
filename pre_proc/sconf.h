@@ -1,5 +1,15 @@
-#ifndef CONF_H
-#define CONF_H
+#ifndef SCONF_H
+#define SCONF_H
+
+#include<stddef.h>
+#include"mtrllib.h"
+#include"input.h"
+
+//extern size_t EG_SIZE;
+//extern size_t XM_SIZE;
+//extern size_t YM_SIZE;
+//extern size_t ZM_SIZE;
+//extern size_t RT_SIZE;
 
 typedef struct
 {
@@ -10,6 +20,7 @@ typedef struct
 	size_t xm_mesh_size; // max num of meshes in x direction
 	size_t ym_mesh_size; // max num of meshes in y direction
 	size_t zm_mesh_size; // max num of meshes in z direction
+	size_t rt_mesh_size; // total num of meshes
 	double *xspan_len; // each length of span in x direction
 	double *yspan_len; // each length of span in y direction
 	double *zspan_len; // each length of span in z direction
@@ -29,10 +40,10 @@ typedef struct
 	
 } SCONF; //steady configuration struct
 
-SCONF *sconf_create(INPUT *input);
+SCONF *sconf_create(const INPUT *input);
 
 void sconf_free(SCONF *sconf);
 
-
+void sconf_fprintf(const SCONF *sconf, FILE *stream);
 
 #endif

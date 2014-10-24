@@ -61,3 +61,13 @@ MTRL *mtrllib_get_fromid(const MTRLLIB *mlib, int mtrl_id)
 	}
 	return NULL;
 }
+
+void mtrllib_fprintf(const MTRLLIB *mlib, FILE *stream)
+{
+	struct NODE *cur_node = mlib->head;
+	while(cur_node != NULL){
+		mtrl_fprintf(cur_node->data, stream);
+		cur_node = cur_node->next;
+	}
+	fprintf(stream, "TOTAL MTRLS = %zd\n", mlib->size);
+}

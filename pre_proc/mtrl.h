@@ -2,12 +2,14 @@
 #define MTRL_H
 
 #include<stddef.h>
+#include<stdio.h>
 
-extern size_t EGSIZE;
+//extern size_t EG_SIZE;
 
 typedef struct
 {
 	int mtrl_id;
+	size_t eg_size;
 	double *chi;
 	double *dcoef;
 	double *sa;
@@ -17,6 +19,7 @@ typedef struct
 } MTRL;
 
 MTRL *mtrl_create(int mtrl_id,
+		  size_t eg_size,
 		  double *chi,
 		  double *dcoef,
 		  double *sa,
@@ -24,6 +27,8 @@ MTRL *mtrl_create(int mtrl_id,
 		  double **ss);
 
 void mtrl_free(MTRL *m);
+
+void mtrl_fprintf(const MTRL *m, FILE *stream);
 
 int mtrl_get_id(const MTRL *m);
 
