@@ -1,16 +1,20 @@
-#include"rect_mapper.h"
+#include"mapper.h"
 #include<stdlib.h>
 #include<stdio.h>
 
 size_t inwhichspan(size_t arr[], size_t span_len, int i);
 
-RECT_MAPPER *rect_mapper_create(const SCONF *sconf)
+MAPPER *mapper_create(const SCONF *sconf)
 {
 	size_t xm_size = sconf->xm_mesh_size;
 	size_t ym_size = sconf->ym_mesh_size;
 	size_t zm_size = sconf->zm_mesh_size;
 	size_t rt_size = sconf->rt_mesh_size;
-	RECT_MAPPER *mapper = malloc(sizeof(RECT_MAPPER));
+	MAPPER *mapper = malloc(sizeof(MAPPER));
+	mapper->xm_size = xm_size;
+	mapper->ym_size = ym_size;
+	mapper->zm_size = zm_size;
+	mapper->rt_size = rt_size;
 	mapper->one2three = malloc(rt_size * sizeof(XYZ_IDX));
 	mapper->three2one = malloc(zm_size * sizeof(size_t **));
 	for(size_t k=0; k<zm_size; ++k){
@@ -32,11 +36,12 @@ RECT_MAPPER *rect_mapper_create(const SCONF *sconf)
 				XYZ_IDX xyz;
 				xyz.xi = i; xyz.yi = j; xyz.zi = k;
 				mapper->one2three[ac] = xyz;
+				ac++;
 			}
 	return mapper;
 }
 
-void rect_mapper_free(RECT_MAPPER *mapper)
+void mapper_free(MAPPER *mapper)
 {
 	for(size_t k=0; k<mapper->zm_size; ++k){
 		for(size_t j=0; j<mapper->ym_size; ++j)
@@ -48,7 +53,7 @@ void rect_mapper_free(RECT_MAPPER *mapper)
 	free(mapper);
 }
 
-inline XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D)
+inline XYZ_IDX mapper_get3Didx(const MAPPER *mapper, size_t idx1D)
 {
 	#ifdef DEBUG
 	size_t rt_size = mapper->rt_size;
@@ -60,7 +65,7 @@ inline XYZ_IDX rect_mapper_get3Didx(RECT_MAPPER *mapper, size_t idx1D)
 	return mapper->one2three[idx1D];
 }
 
-inline size_t rect_mapper_get1Didx(RECT_MAPPER *mapper, size_t i, size_t j, size_t k)
+inline size_t mapper_get1Didx(const MAPPER *mapper, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
 	size_t xm_size = mapper->xm_size;
@@ -80,6 +85,18 @@ inline size_t rect_mapper_get1Didx(RECT_MAPPER *mapper, size_t i, size_t j, size
 	}
 	#endif
 	return r;
+}
+
+void mapper_fprintf(const MAPPER *mapper, FILE *stream)
+{
+	fprintf(stream, "1DPOS\t3DXPOS\t3DYPOS\t3DZPOS\n");
+	for(size_t i=0; i < mapper->rt_size; ++i){
+		size_t x = mapper->one2three[i].xi;
+		size_t y = mapper->one2three[i].yi;
+		size_t z = mapper->one2three[i].zi;
+		size_t r = mapper->three2one[z][y][x];
+		fprintf(stream, "%zd\t%zd\t%zd\t%zd\n",r,x,y,z);
+	}
 }
 
 // private func.

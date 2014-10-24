@@ -5,12 +5,6 @@
 #include"mtrllib.h"
 #include"input.h"
 
-//extern size_t EG_SIZE;
-//extern size_t XM_SIZE;
-//extern size_t YM_SIZE;
-//extern size_t ZM_SIZE;
-//extern size_t RT_SIZE;
-
 typedef struct
 {
 	size_t eg_size; // num of energy groups

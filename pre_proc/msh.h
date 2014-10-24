@@ -1,16 +1,9 @@
 #ifndef MSH_H
 #define MSH_H
 
-#include"rect_mapper.h"
+#include"mapper.h"
 #include<stddef.h>
 #include"sconf.h"
-
-//extern size_t EG_SIZE;
-//extern size_t XM_SIZE;
-//extern size_t YM_SIZE;
-//extern size_t ZM_SIZE;
-//extern size_t RT_SIZE;
-//extern RECT_MAPPER *MAPPER;
 
 typedef struct
 {
@@ -27,9 +20,12 @@ typedef struct
 	double *xpos;
 	double *ypos;
 	double *zpos;
+	size_t eg_size;
+	size_t rt_size;
+	MAPPER *mapper;
 } MSH;
 
-MSH *msh_create(const SCONF *sconf);
+MSH *msh_create(const SCONF *sconf, MAPPER *mapper);
 
 void msh_free(MSH *msh);
 
@@ -58,5 +54,7 @@ double msh_get_xpos(const MSH *msh, size_t i, size_t j, size_t k);
 double msh_get_ypos(const MSH *msh, size_t i, size_t j, size_t k);
 
 double msh_get_zpos(const MSH *msh, size_t i, size_t j, size_t k);
+
+void msh_fprintf(const MSH *msh, FILE *stream);
 
 #endif

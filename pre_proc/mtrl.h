@@ -4,8 +4,6 @@
 #include<stddef.h>
 #include<stdio.h>
 
-//extern size_t EG_SIZE;
-
 typedef struct
 {
 	int mtrl_id;
