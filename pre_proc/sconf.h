@@ -7,6 +7,16 @@
 
 typedef struct
 {
+	size_t start_x;
+	size_t start_y;
+	size_t start_z;
+	size_t end_x;
+	size_t end_y;
+	size_t end_z;
+} MBLOCK;
+
+typedef struct
+{
 	size_t eg_size; // num of energy groups
 	size_t xm_span_size; // max num of spans in x direction
 	size_t ym_span_size; // max num of spans in y direction
@@ -39,5 +49,7 @@ SCONF *sconf_create(const INPUT *input);
 void sconf_free(SCONF *sconf);
 
 void sconf_fprintf(const SCONF *sconf, FILE *stream);
+
+MBLOCK sconf_get_mblock(const SCONF *sconf, size_t xspan, size_t yspan, size_t zspan);
 
 #endif

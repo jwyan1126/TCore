@@ -8,7 +8,13 @@ MTRL *mtrl_create(int mtrl_id,
 		  double *dcoef,
 		  double *sa,
 		  double *vsf,
-		  double **ss)
+		  double **ss,
+		  double *adfxl,
+		  double *adfxr,
+		  double *adfyl,
+		  double *adfyr,
+		  double *adfzl,
+		  double *adfzr)
 {
 	#ifdef DEBUG
 	if(mtrl_id < 0){
@@ -25,6 +31,12 @@ MTRL *mtrl_create(int mtrl_id,
 	mtrl->sr = malloc(eg_size * sizeof(double));
 	mtrl->vsf = malloc(eg_size * sizeof(double));
 	mtrl->ss = malloc(eg_size * sizeof(double *));
+	mtrl->adfxl = malloc(eg_size * sizeof(double));
+	mtrl->adfxr = malloc(eg_size * sizeof(double));
+	mtrl->adfyl = malloc(eg_size * sizeof(double));
+	mtrl->adfyr = malloc(eg_size * sizeof(double));
+	mtrl->adfzl = malloc(eg_size * sizeof(double));
+	mtrl->adfzr = malloc(eg_size * sizeof(double));
 	for(size_t g=0; g<eg_size; ++g)
 		mtrl->ss[g] = malloc(eg_size * sizeof(double));
 	for(size_t g=0; g<eg_size; ++g){
@@ -33,6 +45,12 @@ MTRL *mtrl_create(int mtrl_id,
 		mtrl->sa[g] = sa[g];
 		mtrl->sr[g] = sa[g];
 		mtrl->vsf[g] = vsf[g];
+		mtrl->adfxl[g] = (adfxl == NULL) ? 1.0 : adfxl[g];
+		mtrl->adfxr[g] = (adfxr == NULL) ? 1.0 : adfxr[g];
+		mtrl->adfyl[g] = (adfyl == NULL) ? 1.0 : adfyl[g];
+		mtrl->adfyr[g] = (adfyr == NULL) ? 1.0 : adfyr[g];
+		mtrl->adfzl[g] = (adfzl == NULL) ? 1.0 : adfzl[g];
+		mtrl->adfzr[g] = (adfzr == NULL) ? 1.0 : adfzr[g];
 		for(size_t bg=0; bg<eg_size; ++bg){
 			mtrl->ss[g][bg] = ss[g][bg];
 			if(g != bg)
@@ -86,6 +104,11 @@ void mtrl_fprintf(const MTRL *m, FILE *stream)
 			fprintf(stream, "%4g\t", m->ss[g][from_g]);
 		fprintf(stream, "\n");
 	}
+	fprintf(stream, "ADFs:\n");
+	fprintf(stream, "X-\tX+\tY-\tY+\tZ-\tZ+\n");
+	for(size_t g=0; g<eg_size; ++g)
+		fprintf(stream, "%4g\t%4g\t%4g\t%4g\t%4g\t%4g\n",
+			m->adfxl[g], m->adfxr[g], m->adfyl[g], m->adfyr[g], m->adfzl[g], m->adfxr[g]);
 	fprintf(stream, "\n");
 }
 
@@ -165,4 +188,76 @@ inline double mtrl_get_ss(const MTRL *m, size_t g, size_t from_g)
 	}
 	#endif
 	return m->ss[g][from_g];
+}
+
+inline double mtrl_get_adfxl(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfxl[g];
+}
+
+inline double mtrl_get_adfxr(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfxr[g];
+}
+
+inline double mtrl_get_adfyl(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfyl[g];
+}
+
+inline double mtrl_get_adfyr(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfyr[g];
+}
+
+inline double mtrl_get_adfzl(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfzl[g];
+}
+
+inline double mtrl_get_adfzr(const MTRL *m, size_t g)
+{
+	#ifdef DEBUG
+	size_t eg_size = m->eg_size;
+	if(g >= eg_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	return m->adfzr[g];
 }

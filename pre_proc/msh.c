@@ -29,6 +29,12 @@ MSH *msh_create(const SCONF *sconf, MAPPER *mapper)
 	msh->sr = malloc(eg_size * rt_size * sizeof(double));
 	msh->vsf = malloc(eg_size * rt_size * sizeof(double));
 	msh->ss = malloc(eg_size * rt_size * sizeof(double *));
+	msh->adfxl = malloc(eg_size * rt_size * sizeof(double));
+	msh->adfxr = malloc(eg_size * rt_size * sizeof(double));
+	msh->adfyl = malloc(eg_size * rt_size * sizeof(double));
+	msh->adfyr = malloc(eg_size * rt_size * sizeof(double));
+	msh->adfzl = malloc(eg_size * rt_size * sizeof(double));
+	msh->adfzr = malloc(eg_size * rt_size * sizeof(double));
 	for(size_t i=0; i<eg_size * rt_size; ++i)
 		msh->ss[i] = malloc(eg_size * sizeof(double));
 	
@@ -41,6 +47,7 @@ MSH *msh_create(const SCONF *sconf, MAPPER *mapper)
 	double *xspan_len = sconf->xspan_len;
 	double *yspan_len = sconf->yspan_len;
 	double *zspan_len = sconf->zspan_len;
+	int ***mtrl_set = sconf->mtrl_set;
 	MTRLLIB *mlib = sconf->mtrllib;
 	for(size_t i=0; i < rt_size; ++i){
 		XYZ_IDX xyz = mapper_get3Didx(mapper, i);
@@ -50,7 +57,7 @@ MSH *msh_create(const SCONF *sconf, MAPPER *mapper)
 		size_t xspan = inwhichspan(xspan_subdiv, xm_span_size, x);
 		size_t yspan = inwhichspan(yspan_subdiv, ym_span_size, y);
 		size_t zspan = inwhichspan(zspan_subdiv, zm_span_size, z);
-		int mtrl_id = sconf->mtrl_set[xspan][yspan][zspan];
+		int mtrl_id = mtrl_set[xspan][yspan][zspan];
 		MTRL *m = mtrllib_get_fromid(mlib, mtrl_id);
 		msh->mtrl_id[i] = mtrl_id;
 		msh->dx[i] = xspan_len[xspan] / xspan_subdiv[xspan];
@@ -65,10 +72,40 @@ MSH *msh_create(const SCONF *sconf, MAPPER *mapper)
 			msh->sa[g*rt_size+i] = m->sa[g];
 			msh->sr[g*rt_size+i] = m->sr[g];
 			msh->vsf[g*rt_size+i] = m->vsf[g];
-			for(size_t from_g=0; from_g<eg_size; ++from_g)
+			for(size_t from_g=0; from_g < eg_size; ++from_g)
 				msh->ss[g*rt_size+i][from_g] = m->ss[g][from_g];
 		}
 	}
+	
+	// ADFs set
+	for(size_t g=0; g< eg_size; ++g){
+		for(size_t i=0; i< rt_size; ++i){
+			msh->adfxl[g*rt_size + i] = 1.0;
+			msh->adfxr[g*rt_size + i] = 1.0;
+			msh->adfyl[g*rt_size + i] = 1.0;
+			msh->adfyr[g*rt_size + i] = 1.0;
+			msh->adfzl[g*rt_size + i] = 1.0;
+			msh->adfzr[g*rt_size + i] = 1.0;
+		}
+	}
+	for(size_t xspan=0; xspan < xm_span_size; ++xspan){
+		for(size_t yspan=0; yspan < ym_span_size; ++yspan){
+			for(size_t zspan=0; zspan < zm_span_size; ++zspan){
+				if(mtrl_set[xspan][yspan][xspan] < 0)
+					continue;
+				MBLOCK mblock = sconf_get_mblock(sconf, xspan, yspan, zspan);
+				// Set ADF in x direction
+				for(size_t j=mblock.start_y; j <= mblcok.end_y; ++j)
+					for(size_t k=mblock.start_z; k <= mblock.end_z; ++k)
+						for(size_t g=0; g<eg_size; ++g){
+							////////
+						}
+				// Set ADF in y direction
+				// Set ADF in z direction
+			}
+		}
+	}
+
 	return msh;
 }
 
@@ -79,15 +116,22 @@ void msh_free(MSH *msh)
 	free(msh->dcoef);
 	free(msh->sa);
 	free(msh->vsf);
-	free(msh->ss);
 	free(msh->dx);
 	free(msh->dy);
 	free(msh->dz);
 	free(msh->xpos);
 	free(msh->ypos);
 	free(msh->zpos);
-	for(size_t i=0; i<msh->rt_size; ++i)
+	free(msh->adfxl);
+	free(msh->adfxr);
+	free(msh->adfyl);
+	free(msh->adfyr);
+	free(msh->adfzl);
+	free(msh->adfzr);
+	size_t rt_size = msh->rt_size;
+	for(size_t i=0; i<rt_size; ++i)
 		free(msh->ss[i]);
+	free(msh->ss);
 	free(msh);
 }
 
@@ -156,6 +200,36 @@ inline double msh_get_zpos(const MSH *msh, size_t i, size_t j, size_t k)
 	return msh->zpos[mapper_get1Didx(msh->mapper,i,j,k)];
 }
 
+double msh_get_adfxl(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfxl[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
+double msh_get_adfxr(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfxr[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
+double msh_get_adfyl(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfyl[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
+double msh_get_adfyr(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfyr[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
+double msh_get_adfzl(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfzl[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
+double msh_get_adfzr(const MSH *msh, size_t g, size_t i, size_t j, size_t k)
+{
+	return msh->adfzr[mapper_get1Didx(msh->mapper,i,j,k)];
+}
+
 void msh_fprintf(const MSH *msh, FILE *stream)
 {
 	size_t eg_size = msh->eg_size;
@@ -169,6 +243,19 @@ void msh_fprintf(const MSH *msh, FILE *stream)
 				r, xyz.xi, xyz.yi, xyz.zi, msh->mtrl_id[r], 
 				msh->dx[r], msh->dy[r], msh->dz[r], 
 				msh->xpos[r], msh->ypos[r], msh->zpos[r]);
+	}
+	fprintf(stream, "\n");
+	fprintf(stream, "1DID\t4DEID\t4DXID\t4DYID\t4DZID\tADFXL\tADFXR\tADFYL\tADFYR\tADFZL\tADFZR\n");
+	for(size_t g=0; g< eg_size; ++g){
+		for(size_t i=0; i< rt_size; ++i){
+			XYZ_IDX xyz = mapper->one2three[i];
+			size_t r = mapper->three2one[xyz.zi][xyz.yi][xyz.xi];
+			fprintf(stream, "%4zd\t%4zd\t%4zd\t%4zd\t%4zd\t%4g\t%4g\t%4g\t%4g\t%4g\t%4g\n",
+				g*rt_size+r, g, xyz.xi, xyz.yi, xyz.zi,
+				msh->adfxl[g*rt_size+r], msh->adfxr[g*rt_size+r],
+				msh->adfyl[g*rt_size+r], msh->adfyr[g*rt_size+r],
+				msh->adfzl[g*rt_size+r], msh->adfzr[g*rt_size+r]);
+		}
 	}
 	fprintf(stream, "\n");
 	fprintf(stream, "1DID\t4DEID\t4DXID\t4DYID\t4DZID\tCHI\tDCOEF\tSA\tSR\tVSF\tSS(FROM EG1 ... EGN)\n");

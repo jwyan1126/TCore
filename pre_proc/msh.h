@@ -14,6 +14,12 @@ typedef struct
 	double *sr;
 	double *vsf;
 	double **ss;
+	double *adfxl;
+	double *adfxr;
+	double *adfyl;
+	double *adfyr;
+	double *adfzl;
+	double *adfzr;
 	double *dx;
 	double *dy;
 	double *dz;
@@ -42,6 +48,18 @@ double msh_get_sr(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
 double msh_get_vsf(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
 
 double msh_get_ss(const MSH *msh, size_t g, size_t from_g, size_t i, size_t j, size_t k);
+
+double msh_get_adfxl(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
+
+double msh_get_adfxr(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
+
+double msh_get_adfyl(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
+
+double msh_get_adfyr(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
+
+double msh_get_adfzl(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
+
+double msh_get_adfzr(const MSH *msh, size_t g, size_t i, size_t j, size_t k);
 
 double msh_get_dx(const MSH *msh, size_t i, size_t j, size_t k);
 

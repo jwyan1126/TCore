@@ -8,7 +8,7 @@ INPUT *input_create(const char *path)
 	size_t eg_size = 2;
 	size_t xm_span_size = 2;
 	size_t ym_span_size = 2;
-	size_t zm_span_size = 2;
+	size_t zm_span_size = 1;
 	input->eg_size = eg_size;
 	input->xm_span_size = xm_span_size;
 	input->ym_span_size = ym_span_size;
@@ -37,10 +37,6 @@ INPUT *input_create(const char *path)
 	input->mtrl_set[0][1][0] = 2;
 	input->mtrl_set[1][0][0] = 2;
 	input->mtrl_set[1][1][0] = -1;
-	input->mtrl_set[0][0][1] = 1;
-	input->mtrl_set[0][1][1] = 2;
-	input->mtrl_set[1][0][1] = 2;
-	input->mtrl_set[1][1][1] = -1;
 	for(size_t i=0; i<xm_span_size; ++i){
 		input->xspan_len[i] = 4.0;
 		input->xspan_subdiv[i] = 2;
@@ -62,8 +58,8 @@ INPUT *input_create(const char *path)
 	double **ss = calloc(2,sizeof(double *));
 	for(size_t i=0; i<2; ++i)
 		ss[i] = calloc(2,sizeof(double));
-	MTRL *m1 = mtrl_create(1,eg_size,chi,dcoef,sa,vsf,ss);
-	MTRL *m2 = mtrl_create(2,eg_size,chi,dcoef,sa,vsf,ss);
+	MTRL *m1 = mtrl_create(1,eg_size,chi,dcoef,sa,vsf,ss,NULL,NULL,NULL,NULL,NULL,NULL);
+	MTRL *m2 = mtrl_create(2,eg_size,chi,dcoef,sa,vsf,ss,NULL,NULL,NULL,NULL,NULL,NULL);
 	free(chi);
 	free(dcoef);
 	free(sa);

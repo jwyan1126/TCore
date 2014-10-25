@@ -105,3 +105,40 @@ void sconf_fprintf(const SCONF *sconf, FILE *stream)
 	mtrllib_fprintf(sconf->mtrllib, stream);
 	
 }
+
+MBLOCK sconf_get_mblock(const SCONF *sconf, size_t xspan, size_t yspan, size_t zspan)
+{
+	size_t xm_span_size = sconf->xm_span_size;
+	size_t ym_span_size = sconf->ym_span_size;
+	size_t zm_span_size = sconf->zm_span_size;
+	#ifdef DEBUG
+	if(xspan >= xm_span_size|| yspan >= ym_span_size || zspan >= zm_span_size){
+		fprintf(stderr, "Span index out of range.\n");
+		exit(-1);
+	}
+	#endif
+	size_t *xspan_subdiv = sconf->xspan_subdiv;
+	size_t *yspan_subdiv = sconf->yspan_subdiv;
+	size_t *zspan_subdiv = sconf->zspan_subdiv; 
+	int ***mtrl_set = sconf->mtrl_set;
+	#ifdef DEBUG
+	if(mtrl_set[xspan][yspan][zspan] < 0){
+		fprintf(stderr, "Specified span has no material filled in.\n");
+		exit(-1);
+	}
+	#endif
+	MBLOCK mblk;
+	mblk.start_x = 0;
+	for(size_t i=0; i<xspan; ++i)
+		mblk.start_x += xspan_subdiv[i];
+	mblk.end_x = mblk.start_x + xspan_subdiv[xspan] - 1;
+	mblk.start_y = 0;
+	for(size_t j=0; j<yspan; ++j)
+		mblk.start_y += yspan_subdiv[j];
+	mblk.end_y = mblk.start_y + yspan_subdiv[yspan] - 1;
+	mblk.start_z = 0;
+	for(size_t k=0; k<zspan; ++k)
+		mblk.start_z += zspan_subdiv[k];
+	mblk.end_z = mblk.start_z + zspan_subdiv[zspan] - 1;
+	return mblk;
+}

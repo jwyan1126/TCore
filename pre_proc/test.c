@@ -13,7 +13,6 @@ int main()
 	SCONF *sconf = sconf_create(input);
 	MAPPER *mapper = mapper_create(sconf);
 	MSH *msh = msh_create(sconf,mapper);
-	msh_fprintf(msh, stdout);
 
 	msh_free(msh);
 	mapper_free(mapper);
