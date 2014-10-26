@@ -2,7 +2,7 @@
 #define MESH_H
 
 #include<stddef.h>
-#include<sconf.h>
+#include"sconf.h"
 #include"cdat.h"
 
 typedef struct

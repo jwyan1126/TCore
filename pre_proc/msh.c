@@ -95,7 +95,7 @@ MSH *msh_create(const SCONF *sconf, MAPPER *mapper)
 					continue;
 				MBLOCK mblock = sconf_get_mblock(sconf, xspan, yspan, zspan);
 				// Set ADF in x direction
-				for(size_t j=mblock.start_y; j <= mblcok.end_y; ++j)
+				for(size_t j=mblock.start_y; j <= mblock.end_y; ++j)
 					for(size_t k=mblock.start_z; k <= mblock.end_z; ++k)
 						for(size_t g=0; g<eg_size; ++g){
 							////////

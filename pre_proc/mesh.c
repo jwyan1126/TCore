@@ -1,4 +1,5 @@
 #include"mesh.h"
+#include<stdlib.h>
 
 double pos_cal(size_t rz_s, size_t rz, const double *rz_span, const size_t *rz_subdiv);
 
@@ -8,7 +9,7 @@ MESH *mesh_create(const SCONF *sconf)
 	size_t xm_mesh_size = sconf->xm_mesh_size;
 	size_t ym_mesh_size = sconf->ym_mesh_size;
 	size_t zm_mesh_size = sconf->zm_mesh_size;
-	MESH mesh = malloc(sizeof(MESH));
+	MESH *mesh = malloc(sizeof(MESH));
 	mesh->eg_size = eg_size;
 	mesh->xm_mesh_size = xm_mesh_size;
 	mesh->ym_mesh_size = ym_mesh_size;
@@ -57,6 +58,7 @@ MESH *mesh_create(const SCONF *sconf)
 	for(size_t zspan=0; zspan<zm_span_size; ++zspan)
 		for(size_t yspan=0; yspan<ym_span_size; ++yspan)
 			for(size_t xspan=0; xspan<xm_span_size; ++xspan){
+				if(mtrl_set[xspan][yspan][zspan] < 0) continue;
 				MBLOCK mblock = sconf_get_mblock(sconf, xspan, yspan, zspan);
 				for(size_t k = mblock.start_z; k <= mblock.end_z; ++k)
 					for(size_t j = mblock.start_y; j <= mblock.end_y; ++j)
@@ -94,6 +96,8 @@ MESH *mesh_create(const SCONF *sconf)
 
 void mesh_free(MESH *mesh)
 {
+	size_t zm_mesh_size = mesh->zm_mesh_size;
+	size_t ym_mesh_size = mesh->ym_mesh_size;
 	for(size_t k=0; k< zm_mesh_size; ++k){
 		for(size_t j=0; j< ym_mesh_size; ++j){
 			free(mesh->mtrl_id[k][j]);

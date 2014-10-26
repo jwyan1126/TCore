@@ -1,4 +1,5 @@
 #include"cdat.h"
+#include<stdlib.h>
 
 CDAT3 *cdat3_create(size_t xsize, size_t ysize, size_t zsize)
 {
@@ -143,10 +144,10 @@ void cdat4_set_val(CDAT4 *dat, size_t g, size_t i, size_t j, size_t k, double va
 
 void cdat4_copy(CDAT4 *tar_dat, const CDAT4 *src_dat)
 {
-	size_t gsize = dat->gsize;
-	size_t xsize = dat->xsize;
-	size_t ysize = dat->ysize;
-	size_t zsize = dat->zsize;
+	size_t gsize = tar_dat->gsize;
+	size_t xsize = tar_dat->xsize;
+	size_t ysize = tar_dat->ysize;
+	size_t zsize = tar_dat->zsize;
 	#ifdef DEBUG
 	if(gsize != src_dat->gsize ||
 	   xsize != src_dat->xsize ||
@@ -238,10 +239,10 @@ void cdat5_set_val(CDAT5 *dat, size_t g, size_t from_g, size_t i, size_t j, size
 
 void cdat5_copy(CDAT5 *tar_dat, const CDAT5 *src_dat)
 {
-	size_t gsize = dat->gsize;
-	size_t xsize = dat->xsize;
-	size_t ysize = dat->ysize;
-	size_t zsize = dat->zsize;
+	size_t gsize = tar_dat->gsize;
+	size_t xsize = tar_dat->xsize;
+	size_t ysize = tar_dat->ysize;
+	size_t zsize = tar_dat->zsize;
 	#ifdef DEBUG
 	if(gsize != src_dat->gsize ||
 	   xsize != src_dat->xsize ||

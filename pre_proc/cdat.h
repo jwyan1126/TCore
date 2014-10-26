@@ -1,6 +1,9 @@
 #ifndef CDAT_H
 #define CDAT_H
 
+#include<stddef.h>
+#include<stdio.h>
+
 typedef struct
 {
 	size_t xsize;
