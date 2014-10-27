@@ -120,13 +120,13 @@ MBLOCK sconf_get_mblock(const SCONF *sconf, size_t xspan, size_t yspan, size_t z
 	size_t *xspan_subdiv = sconf->xspan_subdiv;
 	size_t *yspan_subdiv = sconf->yspan_subdiv;
 	size_t *zspan_subdiv = sconf->zspan_subdiv; 
-	int ***mtrl_set = sconf->mtrl_set;
-	#ifdef DEBUG
-	if(mtrl_set[xspan][yspan][zspan] < 0){
-		fprintf(stderr, "Specified span has no material filled in.\n");
-		exit(-1);
-	}
-	#endif
+	//int ***mtrl_set = sconf->mtrl_set;
+	//#ifdef DEBUG
+	//if(mtrl_set[xspan][yspan][zspan] < 0){
+	//	fprintf(stderr, "Specified span has no material filled in.\n");
+	//	exit(-1);
+	//}
+	//#endif
 	MBLOCK mblk;
 	mblk.start_x = 0;
 	for(size_t i=0; i<xspan; ++i)

@@ -4,6 +4,7 @@
 #include<stddef.h>
 #include"sconf.h"
 #include"cdat.h"
+#include"mapper.h"
 
 typedef struct
 {
@@ -11,7 +12,23 @@ typedef struct
 	size_t xm_mesh_size;
 	size_t ym_mesh_size;
 	size_t zm_mesh_size;
-	int ***check; // indexed by [z][y][x]
+	double xl_bdy;
+	double xr_bdy;
+	double yl_bdy;
+	double yr_bdy;
+	double zl_bdy;
+	double zr_bdy;
+	// boundary checker indexed by [z][y][x]
+	// VALUE:
+	// NO FILL		00000001
+	// FILL BUT NOT BDY	00000010
+	// X-			00000100
+	// X+			00001000
+	// Y-			00010000
+	// Y+			00100000
+	// Z-			01000000
+	// Z+			10000000
+	int ***bdy_checker;
 	int ***mtrl_id; // Like above
 	CDAT3 *dx;
 	CDAT3 *dy;
@@ -74,4 +91,6 @@ double mesh_get_adfyr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k);
 double mesh_get_adfzl(const MESH *mesh, size_t g, size_t i, size_t j, size_t k);
 
 double mesh_get_adfzr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k);
+
+void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream);
 #endif

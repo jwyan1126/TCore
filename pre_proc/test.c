@@ -13,6 +13,7 @@ int main()
 	SCONF *sconf = sconf_create(input);
 	MAPPER *mapper = mapper_create(sconf);
 	MESH *mesh = mesh_create(sconf);
+	mesh_fprintf(mesh, mapper, stdout);
 
 	mesh_free(mesh);
 	mapper_free(mapper);

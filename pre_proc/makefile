@@ -1,5 +1,5 @@
-test: test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o
-	cc -g -Wall -std=c99 test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o -DDEBUG
+test: test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o
+	cc -g -Wall -std=c99 test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o -DDEBUG
 input.o: input.h input.c
 	cc -g -c -Wall -std=c99 input.h input.c -DDEBUG
 sconf.o: sconf.h sconf.c
@@ -16,7 +16,10 @@ mesh.o: mesh.h mesh.c
 	cc -g -c -Wall -std=c99 mesh.h mesh.c -DDEBUG
 cdat.o: cdat.h cdat.c
 	cc -g -c -Wall -std=c99 cdat.h cdat.c -DDEBUG
+edat.o: edat.h edat.c
+	cc -g -c -Wall -std=c99 edat.h edat.c -DDEBUG
 clean:
 	rm *.o
 	rm *.gch
 	rm a.out
+	rm *.txt
