@@ -357,7 +357,7 @@ void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream)
 			size_t x = xyz.xi;
 			size_t y = xyz.yi;
 			size_t z = xyz.zi;
-			size_t r = mapper->three2one[xyz.zi][xyz.yi][xyz.xi];
+			size_t r = mapper->three2one[z][y][x];
 			fprintf(stream, "%4zd\t%4zd\t%4zd\t%4zd\t%4zd\t%4g\t%4g\t%4g\t%4g\t%4g\t%4g\n",
 				g*rt_size+r, g, x, y, z,
 				mesh_get_adfxl(mesh, g, x, y, z),
@@ -376,8 +376,8 @@ void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream)
 			size_t x = xyz.xi;
 			size_t y = xyz.yi;
 			size_t z = xyz.zi;
-			size_t r = mapper->three2one[xyz.zi][xyz.yi][xyz.xi];
-			fprintf(stream, "%zd\t%zd\t%zd\t%zd\t%zd\t%g\t%g\t%g\t%g\t%g\t",
+			size_t r = mapper->three2one[z][y][x];
+			fprintf(stream, "%4zd\t%4zd\t%4zd\t%4zd\t%4zd\t%4.3g\t%4.3g\t%4.3g\t%4.3g\t%4.3g\t",
 					g*rt_size+r, g, x, y, z, 
 					mesh_get_chi(mesh, g, x, y, z),
 					mesh_get_dcoef(mesh, g, x, y, z),

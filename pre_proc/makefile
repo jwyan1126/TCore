@@ -1,5 +1,5 @@
-test: test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o
-	cc -g -Wall -std=c99 test.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o -DDEBUG
+main: main.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o
+	cc -g -Wall -std=c99 main.c list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o -DDEBUG
 input.o: input.h input.c
 	cc -g -c -Wall -std=c99 input.h input.c -DDEBUG
 sconf.o: sconf.h sconf.c

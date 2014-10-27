@@ -29,7 +29,7 @@ typedef struct
 	// Z-			01000000
 	// Z+			10000000
 	int ***bdy_checker;
-	int ***mtrl_id; // Like above
+	int ***mtrl_id; // indexed by [z][y][x]
 	CDAT3 *dx;
 	CDAT3 *dy;
 	CDAT3 *dz;

@@ -275,3 +275,39 @@ void edat4_copy(EDAT4 *tar_dat, const EDAT4 *src_dat)
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->zdata[j][i][k][g] = src_dat->zdata[j][i][k][g];
 }
+
+void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream)
+{
+	fprintf(stream, "EG=%4zd\tX=%4zd\tY=%4zd\tZ=%4zd\n",g,i,j,k);
+	fprintf(stream, "XL\t\tXR\t\tYL\t\tYR\t\tZL\t\tZR\n");
+	fprintf(stream, "%4g\t%4g\t%4g\t%4g\t%4g\t%4g\n", 
+			edat4_get_xlval(dat,g,i,j,k),
+			edat4_get_xrval(dat,g,i,j,k),
+			edat4_get_ylval(dat,g,i,j,k),
+			edat4_get_yrval(dat,g,i,j,k),
+			edat4_get_zlval(dat,g,i,j,k),
+			edat4_get_zrval(dat,g,i,j,k));
+}
+
+void edat4_set_rand(EDAT4 *dat)
+{
+	size_t gsize = dat->gsize;
+	size_t xsize = dat->xsize;
+	size_t ysize = dat->ysize;
+	size_t zsize = dat->zsize;
+	for(size_t k=0; k<zsize; ++k)
+		for(size_t j=0; j<ysize; ++j)
+			for(size_t i=0; i<xsize+1; ++i)
+				for(size_t g=0; g<gsize; ++g)
+					dat->xdata[k][j][i][g] = rand();
+	for(size_t i=0; i<xsize; ++i)
+		for(size_t k=0; k<zsize; ++k)
+			for(size_t j=0; j<ysize+1; ++j)
+				for(size_t g=0; g<gsize; ++g)
+					dat->ydata[i][k][j][g] = rand();
+	for(size_t j=0; j<ysize; ++j)
+		for(size_t i=0; i<xsize; ++i)
+			for(size_t k=0; k<zsize+1; ++k)
+				for(size_t g=0; g<gsize; ++g)
+					dat->zdata[j][i][k][g] = rand();
+}
