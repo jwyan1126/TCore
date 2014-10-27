@@ -1,12 +1,10 @@
 #include"mesh.h"
 #include<stdlib.h>
+#include"checker.h"
 
 double pos_cal(size_t rz_s, size_t rz, const double *rz_span, const size_t *rz_subdiv);
-void bdy_check(int ***bdy_checker, int ***mtrl_set, const SCONF *sconf,
-		size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t *xspan_subdiv, size_t *yspan_subdiv, size_t *zspan_subdiv);
 
-MESH *mesh_create(const SCONF *sconf)
+MESH *mesh_create(SCONF *sconf)
 {
 	size_t eg_size = sconf->eg_size;
 	size_t xm_mesh_size = sconf->xm_mesh_size;
@@ -28,24 +26,24 @@ MESH *mesh_create(const SCONF *sconf)
 			mesh->bdy_checker[k][j] = calloc(xm_mesh_size, sizeof(int));
 		}
 	}
-	mesh->dx = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->dy = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->dz = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->xpos = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->ypos = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->zpos = cdat3_create(xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->chi = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->dcoef = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->sa = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->sr = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->vsf = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->ss = cdat5_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfxl = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfxr = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfyl = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfyr = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfzl = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
-	mesh->adfzr = cdat4_create(eg_size, xm_mesh_size, ym_mesh_size, zm_mesh_size);
+	mesh->dx = cdat3_create(sconf);
+	mesh->dy = cdat3_create(sconf);
+	mesh->dz = cdat3_create(sconf);
+	mesh->xpos = cdat3_create(sconf);
+	mesh->ypos = cdat3_create(sconf);
+	mesh->zpos = cdat3_create(sconf);
+	mesh->chi = cdat4_create(sconf);
+	mesh->dcoef = cdat4_create(sconf);
+	mesh->sa = cdat4_create(sconf);
+	mesh->sr = cdat4_create(sconf);
+	mesh->vsf = cdat4_create(sconf);
+	mesh->ss = cdat5_create(sconf);
+	mesh->adfxl = cdat4_create(sconf);
+	mesh->adfxr = cdat4_create(sconf);
+	mesh->adfyl = cdat4_create(sconf);
+	mesh->adfyr = cdat4_create(sconf);
+	mesh->adfzl = cdat4_create(sconf);
+	mesh->adfzr = cdat4_create(sconf);
 	
 	size_t xm_span_size = sconf->xm_span_size;
 	size_t ym_span_size = sconf->ym_span_size;
@@ -58,7 +56,7 @@ MESH *mesh_create(const SCONF *sconf)
 	double *zspan_len = sconf->zspan_len;
 	int ***mtrl_set = sconf->mtrl_set;
 	MTRLLIB *mlib = sconf->mtrllib;
-	bdy_check(mesh->bdy_checker, mtrl_set, sconf, xm_span_size, ym_span_size, zm_span_size, xspan_subdiv, yspan_subdiv, zspan_subdiv);
+	bdy_check(mesh->bdy_checker, sconf);
 	for(size_t zspan=0; zspan<zm_span_size; ++zspan)
 		for(size_t yspan=0; yspan<ym_span_size; ++yspan)
 			for(size_t xspan=0; xspan<xm_span_size; ++xspan){
@@ -404,94 +402,4 @@ double pos_cal(size_t rz_s, size_t rz, const double *rz_span, const size_t *rz_s
 	tmp += t * d;
 	tmp += d/2.0;
 	return tmp;
-}
-
-// private func.
-int has_xlspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(xspan == 0) return 0;
-	if(mtrl_set[xspan-1][yspan][zspan] < 0) return 0;
-	return 1;
-}
-
-// private func.
-int has_xrspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(xspan == xspan_size-1) return 0;
-	if(mtrl_set[xspan+1][yspan][zspan] < 0) return 0;
-	return 1;
-}
-
-// private func.
-int has_ylspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(yspan == 0) return 0;
-	if(mtrl_set[xspan][yspan-1][zspan] < 0) return 0;
-	return 1;
-}
-
-// private func.
-int has_yrspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(yspan == yspan_size-1) return 0;
-	if(mtrl_set[xspan][yspan+1][zspan] < 0) return 0;
-	return 1;
-}
-
-// private func.
-int has_zlspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(zspan == 0) return 0;
-	if(mtrl_set[xspan][yspan][zspan-1] < 0) return 0;
-	return 1;
-}
-
-// private func.
-int has_zrspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t xspan, size_t yspan, size_t zspan)
-{
-	if(zspan == zspan_size-1) return 0;
-	if(mtrl_set[xspan][yspan][zspan+1] < 0) return 0;
-	return 1;
-}
-
-// private func.
-void bdy_check(int ***bdy_checker, int ***mtrl_set, const SCONF *sconf,
-		size_t xspan_size, size_t yspan_size, size_t zspan_size,
-		size_t *xspan_subdiv, size_t *yspan_subdiv, size_t *zspan_subdiv)
-{
-	for(size_t zspan=0; zspan<zspan_size; ++zspan)
-		for(size_t yspan=0; yspan<yspan_size; ++yspan)
-			for(size_t xspan=0; xspan<xspan_size; ++xspan){
-				MBLOCK mblock = sconf_get_mblock(sconf, xspan, yspan, zspan);
-				for(size_t k = mblock.start_z; k <= mblock.end_z; ++k)
-					for(size_t j = mblock.start_y; j <= mblock.end_y; ++j)
-						for(size_t i = mblock.start_x; i <= mblock.end_x; ++i){
-						int mtrl_id = mtrl_set[xspan][yspan][zspan];
-						if(mtrl_id < 0){
-							bdy_checker[k][j][i] = 0b00000001;
-							continue;
-						}
-						else
-							bdy_checker[k][j][i] = 0b00000010;
-
-						if(i == mblock.start_x && !has_xlspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b00000100;
-						if(i == mblock.end_x && !has_xrspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b00001000;
-						if(j == mblock.start_y && !has_ylspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b00010000;
-						if(j == mblock.end_y && !has_yrspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b00100000;
-						if(k == mblock.start_z && !has_zlspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b01000000;
-						if(k == mblock.end_z && !has_zrspan(mtrl_set,xspan_size,yspan_size,zspan_size,xspan,yspan,zspan))
-							bdy_checker[k][j][i] |= 0b10000000;
-						}
-			}
 }

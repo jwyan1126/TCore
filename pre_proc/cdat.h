@@ -1,6 +1,7 @@
 #ifndef CDAT_H
 #define CDAT_H
 
+#include"sconf.h"
 #include<stddef.h>
 #include<stdio.h>
 
@@ -9,10 +10,11 @@ typedef struct
 	size_t xsize;
 	size_t ysize;
 	size_t zsize;
+	int ***checker;
 	double ***data;
 } CDAT3;
 
-CDAT3 *cdat3_create(size_t xsize, size_t ysize, size_t zsize);
+CDAT3 *cdat3_create(SCONF *sconf);
 
 void cdat3_free(CDAT3 *dat);
 
@@ -28,10 +30,11 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
+	int ***checker;
 	double ****data;
 } CDAT4;
 
-CDAT4 *cdat4_create(size_t gsize, size_t xsize, size_t ysize, size_t zsize);
+CDAT4 *cdat4_create(SCONF *sconf);
 
 void cdat4_free(CDAT4 *dat);
 
@@ -47,10 +50,11 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
+	int ***checker;
 	double *****data;
 } CDAT5;
 
-CDAT5 *cdat5_create(size_t gsize, size_t xsize, size_t ysize, size_t zsize);
+CDAT5 *cdat5_create(SCONF *sconf);
 
 void cdat5_free(CDAT5 *dat);
 

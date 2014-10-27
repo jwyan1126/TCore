@@ -12,12 +12,6 @@ typedef struct
 	size_t xm_mesh_size;
 	size_t ym_mesh_size;
 	size_t zm_mesh_size;
-	double xl_bdy;
-	double xr_bdy;
-	double yl_bdy;
-	double yr_bdy;
-	double zl_bdy;
-	double zr_bdy;
 	// boundary checker indexed by [z][y][x]
 	// VALUE:
 	// NO FILL		00000001
@@ -50,7 +44,7 @@ typedef struct
 	CDAT4 *adfzr;
 } MESH;
 
-MESH *mesh_create(const SCONF *sconf);
+MESH *mesh_create(SCONF *sconf);
 
 void mesh_free(MESH *mesh);
 
