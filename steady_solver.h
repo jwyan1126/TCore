@@ -4,15 +4,17 @@
 #include"pre_proc/sconf.h"
 #include"pre_proc/edat.h"
 #include"algebra/mat.h"
+#include"ssol.h"
+#include"pre_proc/mesh.h"
 
-void steady_solver(SSOL *ssol, const SCONF *sconf, const MESH *mesh);
+void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh);
 
-void cal_DFDM(EDAT *DFDM, const *sconf, const *mesh);
+void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh);
 
-void cal_M(MAT *M, const EDAT *DFDM, const EDAT *DNOD);
+void cal_M(MAT *M, EDAT4 *DFDM, EDAT4 *DNOD, const MAPPER *mapper, const MESH *mesh);
 
-void cal_S(MAT *S, const *sconf, const *mesh);
+void cal_S(MAT *S, const SCONF *sconf, const MAPPER *mapper, const MESH *mesh);
 
-void cal_F(MAT *F, const (sconf, const *mesh);
+void cal_F(MAT *F, const SCONF *sconf, const MAPPER *mapper, const MESH *mesh);
 
 #endif

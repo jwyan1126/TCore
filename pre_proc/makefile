@@ -22,6 +22,4 @@ checker.o: checker.h checker.c
 	cc -g -c -Wall -std=c99 checker.h checker.c -DDEBUG
 clean:
 	rm *.o
-	rm *.gch
 	rm *.a
-	rm a.out

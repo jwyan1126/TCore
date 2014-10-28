@@ -20,12 +20,12 @@ INPUT *input_create(const char *path)
 	input->yspan_subdiv = calloc(ym_span_size, sizeof(size_t));
 	input->zspan_subdiv = calloc(zm_span_size, sizeof(size_t));
 
-	input->xl_bdy = 0.0;
-	input->xr_bdy = 0.5;
-	input->yl_bdy = 0.0;
-	input->yr_bdy = 0.5;
-	input->zl_bdy = 0.0;
-	input->zr_bdy = 0.0;
+	input->xl_bdy = 0;
+	input->xr_bdy = 2;
+	input->yl_bdy = 0;
+	input->yr_bdy = 2;
+	input->zl_bdy = 0;
+	input->zr_bdy = 0;
 
 	input->mtrl_set = calloc(input->xm_span_size, sizeof(int **));
 	for(size_t i=0; i<input->xm_span_size; ++i){
@@ -33,6 +33,7 @@ INPUT *input_create(const char *path)
 		for(size_t j=0; j<input->ym_span_size; ++j)
 			input->mtrl_set[i][j] = calloc(input->zm_span_size, sizeof(int));
 	}
+
 	input->mtrl_set[0][0][0] = 1;
 	input->mtrl_set[1][0][0] = 2;
 	input->mtrl_set[2][0][0] = 1;
@@ -179,11 +180,11 @@ void input_fprintf(const INPUT *input, FILE *stream)
 		fprintf(stream, "%4zd\t", input->zspan_subdiv[i]);
 	fprintf(stream, "\n");
 	fprintf(stream, "XL_BDY\tXR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", input->xl_bdy, input->xr_bdy);
+	fprintf(stream, "%4d\t%4d\n", input->xl_bdy, input->xr_bdy);
 	fprintf(stream, "YL_BDY\tYR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", input->yl_bdy, input->yr_bdy);
+	fprintf(stream, "%4d\t%4d\n", input->yl_bdy, input->yr_bdy);
 	fprintf(stream, "ZL_BDY\tZR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", input->zl_bdy, input->zr_bdy);
+	fprintf(stream, "%4d\t%4d\n", input->zl_bdy, input->zr_bdy);
 	fprintf(stream, "\n");
 	fprintf(stream, "MATERIAL SETTING:\n");
 	for(size_t k=0; k<input->zm_span_size; ++k){

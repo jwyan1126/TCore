@@ -1,6 +1,8 @@
 #ifndef SSOL_H
 #define SSOL_H
 
+#include<stddef.h>
+
 typedef struct
 {
 	double keff;

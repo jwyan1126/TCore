@@ -1,4 +1,6 @@
-#include"solution.h"
+#include"ssol.h"
+
+#include<stdlib.h>
 
 SSOL *ssol_create(size_t eg_size, size_t rt_size)
 {

@@ -86,11 +86,11 @@ void sconf_fprintf(const SCONF *sconf, FILE *stream)
 		fprintf(stream, "%4zd\t", sconf->zspan_subdiv[i]);
 	fprintf(stream, "\n");
 	fprintf(stream, "XL_BDY\tXR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", sconf->xl_bdy, sconf->xr_bdy);
+	fprintf(stream, "%4d\t%4d\n", sconf->xl_bdy, sconf->xr_bdy);
 	fprintf(stream, "YL_BDY\tYR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", sconf->yl_bdy, sconf->yr_bdy);
+	fprintf(stream, "%4d\t%4d\n", sconf->yl_bdy, sconf->yr_bdy);
 	fprintf(stream, "ZL_BDY\tZR_BDY:\n");
-	fprintf(stream, "%4g\t%4g\n", sconf->zl_bdy, sconf->zr_bdy);
+	fprintf(stream, "%4d\t%4d\n", sconf->zl_bdy, sconf->zr_bdy);
 	fprintf(stream, "\n");
 	fprintf(stream, "MATERIAL SETTING:\n");
 	for(size_t k=0; k<sconf->zm_span_size; ++k){

@@ -17,12 +17,12 @@ typedef struct
 	size_t *yspan_subdiv;
 	size_t *zspan_subdiv;
 
-	double xl_bdy;
-	double xr_bdy;
-	double yl_bdy;
-	double yr_bdy;
-	double zl_bdy;
-	double zr_bdy;
+	int xl_bdy;
+	int xr_bdy;
+	int yl_bdy;
+	int yr_bdy;
+	int zl_bdy;
+	int zr_bdy;
 
 	int ***mtrl_set;
 	MTRLLIB *mtrllib;
