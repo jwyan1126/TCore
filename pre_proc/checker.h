@@ -14,3 +14,5 @@ int has_zlspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zsp
 int has_zrspan(int ***mtrl_set, size_t xspan_size, size_t yspan_size, size_t zspan_size,
 		size_t xspan, size_t yspan, size_t zspan);
 void bdy_check(int ***bdy_checker, SCONF *sconf);
+
+void bdy_check_edge(int ***xchecker, int ***ychecker, int ***zchecker, SCONF *sconf);

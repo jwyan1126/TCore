@@ -3,6 +3,7 @@
 
 #include<stddef.h>
 #include<stdio.h>
+#include"sconf.h"
 
 typedef struct
 {
@@ -10,12 +11,18 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
+	// FILL  0001
+	// LFILL 0011
+	// RFILL 0101
+	int ***xchecker;
 	double ****xdata; // indexed by [z][y][x][g]
+	int ***ychecker;
 	double ****ydata; // indexed by [x][z][y][g]
+	int ***zchecker;
 	double ****zdata; // indexed by [y][x][z][g]
 } EDAT4;
 
-EDAT4 *edat4_create(size_t gsize, size_t xsize, size_t ysize, size_t zsize);
+EDAT4 *edat4_create(SCONF *sconf);
 
 void edat4_free(EDAT4 *dat);
 

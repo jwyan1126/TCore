@@ -1,40 +1,55 @@
 #include"edat.h"
 #include<stdlib.h>
+#include"checker.h"
 
-EDAT4 *edat4_create(size_t gsize, size_t xsize, size_t ysize, size_t zsize)
+EDAT4 *edat4_create(SCONF *sconf)
 {
+	size_t gsize = sconf->eg_size;
+	size_t xsize = sconf->xm_mesh_size;
+	size_t ysize = sconf->ym_mesh_size;
+	size_t zsize = sconf->zm_mesh_size;
 	EDAT4 *dat = malloc(sizeof(EDAT4));
 	dat->gsize = gsize;
 	dat->xsize = xsize;
 	dat->ysize = ysize;
 	dat->zsize = zsize;
+	dat->xchecker = malloc(zsize * sizeof(int **));
 	dat->xdata = malloc(zsize * sizeof(double ***));
 	for(size_t k=0; k< zsize; ++k){
+		dat->xchecker[k] = malloc(ysize * sizeof(int *));
 		dat->xdata[k] = malloc(ysize * sizeof(double **));
 		for(size_t j=0; j< ysize; ++j){
+			dat->xchecker[k][j] = calloc(xsize+1, sizeof(int));
 			dat->xdata[k][j] = malloc((xsize+1) * sizeof(double *));
 			for(size_t i=0; i< xsize+1; ++i)
 				dat->xdata[k][j][i] = calloc(gsize, sizeof(double));
 		}
 	}
+	dat->ychecker = malloc(xsize * sizeof(int **));
 	dat->ydata = malloc(xsize * sizeof(double ***));
 	for(size_t i=0; i< xsize; ++i){
+		dat->ychecker[i] = malloc(zsize * sizeof(int *));
 		dat->ydata[i] = malloc(zsize * sizeof(double **));
 		for(size_t k=0; k< zsize; ++k){
+			dat->ychecker[i][k] = calloc(ysize+1, sizeof(int));
 			dat->ydata[i][k] = malloc((ysize+1) * sizeof(double *));
 			for(size_t j=0; j< ysize+1; ++j)
 				dat->ydata[i][k][j] = calloc(gsize, sizeof(double));
 		}
 	}
+	dat->zchecker = malloc(ysize * sizeof(int **));
 	dat->zdata = malloc(ysize * sizeof(double ***));
 	for(size_t j=0; j< ysize; ++j){
+		dat->zchecker[j] = malloc(xsize * sizeof(int *));
 		dat->zdata[j] = malloc(xsize * sizeof(double **));
 		for(size_t i=0; i< xsize; ++i){
+			dat->zchecker[j][i] = calloc(zsize+1, sizeof(int));
 			dat->zdata[j][i] = malloc((zsize+1) * sizeof(double *));
 			for(size_t k=0; k< zsize+1; ++k)
 				dat->zdata[j][i][k] = calloc(gsize, sizeof(double));
 		}
 	}
+	bdy_check_edge(dat->xchecker, dat->ychecker, dat->zchecker, sconf);
 	return dat;
 }
 
@@ -47,28 +62,37 @@ void edat4_free(EDAT4 *dat)
 		for(size_t j=0; j< ysize; ++j){
 			for(size_t i=0; i< xsize+1; ++i)
 				free(dat->xdata[k][j][i]);
+			free(dat->xchecker[k][j]);
 			free(dat->xdata[k][j]);
 		}
+		free(dat->xchecker[k]);
 		free(dat->xdata[k]);
 	}
+	free(dat->xchecker);
 	free(dat->xdata);
 	for(size_t i=0; i< xsize; ++i){
 		for(size_t k=0; k< zsize; ++k){
 			for(size_t j=0; j< ysize+1; ++j)
 				free(dat->ydata[i][k][j]);
+			free(dat->ychecker[i][k]);
 			free(dat->ydata[i][k]);
 		}
+		free(dat->ychecker[i]);
 		free(dat->ydata[i]);
 	}
+	free(dat->ychecker);
 	free(dat->ydata);
 	for(size_t j=0; j< ysize; ++j){
 		for(size_t i=0; i< xsize; ++i){
 			for(size_t k=0; k< zsize+1; ++k)
 				free(dat->zdata[j][i][k]);
+			free(dat->zchecker[j][i]);
 			free(dat->zdata[j][i]);
 		}
+		free(dat->zchecker[j]);
 		free(dat->zdata[j]);
 	}
+	free(dat->zchecker);
 	free(dat->zdata);
 	free(dat);
 }
@@ -80,7 +104,7 @@ inline double edat4_get_xlval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->xchecker[k][j][i] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -94,7 +118,7 @@ inline double edat4_get_xrval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->xchecker[k][j][i+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -109,7 +133,7 @@ inline double edat4_get_ylval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->ychecker[i][k][j] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -123,7 +147,7 @@ inline double edat4_get_yrval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->ychecker[i][k][j+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -137,7 +161,7 @@ inline double edat4_get_zlval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->zchecker[j][i][k] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -151,7 +175,7 @@ inline double edat4_get_zrval(const EDAT4 *dat, size_t g, size_t i, size_t j, si
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->zchecker[j][i][k+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -166,7 +190,7 @@ inline void edat4_set_xlval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->xchecker[k][j][i] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -180,7 +204,7 @@ inline void edat4_set_xrval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->xchecker[k][j][i+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -194,7 +218,7 @@ inline void edat4_set_ylval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->ychecker[i][k][j] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -208,7 +232,7 @@ inline void edat4_set_yrval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->ychecker[i][k][j+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -222,7 +246,7 @@ inline void edat4_set_zlval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->zchecker[j][i][k] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -236,7 +260,7 @@ inline void edat4_set_zrval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, 
 	size_t xsize = dat->xsize;
 	size_t ysize = dat->ysize;
 	size_t zsize = dat->zsize;
-	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize){
+	if(g >= gsize || i >= xsize || j >= ysize || k >= zsize || !(dat->zchecker[j][i][k+1] & 0b0001)){
 		fprintf(stderr, "Index out of range.\n");
 		exit(-1);
 	}
@@ -261,19 +285,25 @@ void edat4_copy(EDAT4 *tar_dat, const EDAT4 *src_dat)
 	#endif
 	for(size_t k=0; k<zsize; ++k)
 		for(size_t j=0; j<ysize; ++j)
-			for(size_t i=0; i<xsize+1; ++i)
+			for(size_t i=0; i<xsize+1; ++i){
+				tar_dat->xchecker[k][j][i] = src_dat->xchecker[k][j][i];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->xdata[k][j][i][g] = src_dat->xdata[k][j][i][g];
+			}
 	for(size_t i=0; i<xsize; ++i)
 		for(size_t k=0; k<zsize; ++k)
-			for(size_t j=0; j<ysize+1; ++j)
+			for(size_t j=0; j<ysize+1; ++j){
+				tar_dat->ychecker[i][k][j] = src_dat->ychecker[i][k][j];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->ydata[i][k][j][g] = src_dat->ydata[i][k][j][g];
+			}
 	for(size_t j=0; j<ysize; ++j)
 		for(size_t i=0; i<xsize; ++i)
-			for(size_t k=0; k<zsize+1; ++k)
+			for(size_t k=0; k<zsize+1; ++k){
+				tar_dat->zchecker[j][i][k] = src_dat->zchecker[j][i][k];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->zdata[j][i][k][g] = src_dat->zdata[j][i][k][g];
+			}
 }
 
 void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream)
@@ -287,6 +317,14 @@ void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *str
 			edat4_get_yrval(dat,g,i,j,k),
 			edat4_get_zlval(dat,g,i,j,k),
 			edat4_get_zrval(dat,g,i,j,k));
+	fprintf(stream, "ISXL\t\tISXR\t\tISYL\t\tISYR\t\tISZL\t\tISZR\n");
+	fprintf(stream, "%4d\t\t%4d\t\t%4d\t\t%4d\t\t%4d\t\t%4d\n", 
+			(dat->xchecker[k][j][i] & 0b0010) != 0,
+			(dat->xchecker[k][j][i+1] & 0b0100) != 0,
+			(dat->ychecker[i][k][j] & 0b0010) != 0,
+			(dat->ychecker[i][k][j+1] & 0b0100) != 0,
+			(dat->zchecker[j][i][k] & 0b0010) != 0,
+			(dat->zchecker[j][i][k+1] & 0b0100) != 0);
 }
 
 void edat4_set_rand(EDAT4 *dat)

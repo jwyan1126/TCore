@@ -24,3 +24,4 @@ clean:
 	rm *.o
 	rm *.gch
 	rm *.a
+	rm a.out
