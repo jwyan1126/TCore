@@ -31,7 +31,8 @@ MAPPER *mapper_create(const SCONF *sconf)
 				size_t yspan = inwhichspan(sconf->yspan_subdiv, sconf->ym_mesh_size, j);
 				size_t zspan = inwhichspan(sconf->zspan_subdiv, sconf->zm_mesh_size, k);
 				int mtrl_id = sconf->mtrl_set[xspan][yspan][zspan];
-				if(mtrl_id < 0) continue;
+				if(mtrl_id < 0)
+					continue;
 				mapper->three2one[k][j][i] = ac;
 				XYZ_IDX xyz;
 				xyz.xi = i; xyz.yi = j; xyz.zi = k;
@@ -71,20 +72,12 @@ inline size_t mapper_get1Didx(const MAPPER *mapper, size_t i, size_t j, size_t k
 	size_t xm_size = mapper->xm_size;
 	size_t ym_size = mapper->ym_size;
 	size_t zm_size = mapper->zm_size;
-	size_t rt_size = mapper->rt_size;
 	if(i >= xm_size || j >= ym_size || k >= zm_size){
 		fprintf(stderr, "'idx3D' out of range.\n");
 		exit(-1);
 	}
 	#endif
-	size_t r = mapper->three2one[k][j][i];
-	#ifdef DEBUG
-	if(r <0 || r >= rt_size){
-		fprintf(stderr, "'idx3D' out of range.\n");
-		exit(-1);
-	}
-	#endif
-	return r;
+	return mapper->three2one[k][j][i];
 }
 
 void mapper_fprintf(const MAPPER *mapper, FILE *stream)

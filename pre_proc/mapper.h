@@ -11,6 +11,7 @@ typedef struct
 	size_t zi;
 } XYZ_IDX;
 
+// mapper should contains a checker!!!
 typedef struct
 {
 	size_t xm_size;

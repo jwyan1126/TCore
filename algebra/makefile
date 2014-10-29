@@ -13,3 +13,4 @@ eigen.o: eigen.h eigen.c
 clean:
 	rm *.o
 	rm *.a
+	rm *.gch

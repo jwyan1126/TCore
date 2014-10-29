@@ -23,3 +23,4 @@ checker.o: checker.h checker.c
 clean:
 	rm *.o
 	rm *.a
+	rm *.gch

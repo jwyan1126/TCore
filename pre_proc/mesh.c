@@ -67,6 +67,7 @@ MESH *mesh_create(SCONF *sconf)
 							if(mesh->bdy_checker[k][j][i] & 0b00000001) continue;
 							int mtrl_id = mtrl_set[xspan][yspan][zspan];
 							MTRL *m = mtrllib_get_fromid(mlib, mtrl_id);
+							if(m == NULL) {fprintf(stderr,"Mtrl ID = %d NOT found.\n", mtrl_id); exit(-1); }
 							mesh->mtrl_id[k][j][i] = mtrl_id;
 							cdat3_set_val(mesh->dx, i, j, k, xspan_len[xspan]/xspan_subdiv[xspan]);
 							cdat3_set_val(mesh->dy, i, j, k, yspan_len[yspan]/yspan_subdiv[yspan]);
