@@ -127,16 +127,16 @@ INPUT *input_create(const char *path)
 
 	for(size_t i=0; i<xm_span_size; ++i){
 		input->xspan_len[i] = 23.1226;
-		input->xspan_subdiv[i] = 4;
+		input->xspan_subdiv[i] = 2;
 	}
 	input->xspan_len[0] = 23.1226 / 2.0;
-	input->xspan_subdiv[0] = 2;
+	input->xspan_subdiv[0] = 1;
 	for(size_t j=0; j<ym_span_size; ++j){
 		input->yspan_len[j] = 23.1226;
-		input->yspan_subdiv[j] = 4;
+		input->yspan_subdiv[j] = 2;
 	}
 	input->yspan_len[0] = 23.1226 / 2.0;
-	input->yspan_subdiv[0] = 2;
+	input->yspan_subdiv[0] = 1;
 	for(size_t k=0; k<zm_span_size; ++k){
 		input->zspan_len[k] = 1.0;
 		input->zspan_subdiv[k] = 1;

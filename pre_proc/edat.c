@@ -1,55 +1,47 @@
 #include"edat.h"
 #include<stdlib.h>
-#include"checker.h"
 
-EDAT4 *edat4_create(SCONF *sconf)
+EDAT4 *edat4_create(MAPPER *mapper)
 {
-	size_t gsize = sconf->eg_size;
-	size_t xsize = sconf->xm_mesh_size;
-	size_t ysize = sconf->ym_mesh_size;
-	size_t zsize = sconf->zm_mesh_size;
+	size_t gsize = mapper->eg_size;
+	size_t xsize = mapper->xm_size;
+	size_t ysize = mapper->ym_size;
+	size_t zsize = mapper->zm_size;
 	EDAT4 *dat = malloc(sizeof(EDAT4));
 	dat->gsize = gsize;
 	dat->xsize = xsize;
 	dat->ysize = ysize;
 	dat->zsize = zsize;
-	dat->xchecker = malloc(zsize * sizeof(int **));
+	dat->xchecker = mapper->xchecker;
+	dat->ychecker = mapper->ychecker;
+	dat->zchecker = mapper->zchecker;
 	dat->xdata = malloc(zsize * sizeof(double ***));
 	for(size_t k=0; k< zsize; ++k){
-		dat->xchecker[k] = malloc(ysize * sizeof(int *));
 		dat->xdata[k] = malloc(ysize * sizeof(double **));
 		for(size_t j=0; j< ysize; ++j){
-			dat->xchecker[k][j] = calloc(xsize+1, sizeof(int));
 			dat->xdata[k][j] = malloc((xsize+1) * sizeof(double *));
 			for(size_t i=0; i< xsize+1; ++i)
 				dat->xdata[k][j][i] = calloc(gsize, sizeof(double));
 		}
 	}
-	dat->ychecker = malloc(xsize * sizeof(int **));
 	dat->ydata = malloc(xsize * sizeof(double ***));
 	for(size_t i=0; i< xsize; ++i){
-		dat->ychecker[i] = malloc(zsize * sizeof(int *));
 		dat->ydata[i] = malloc(zsize * sizeof(double **));
 		for(size_t k=0; k< zsize; ++k){
-			dat->ychecker[i][k] = calloc(ysize+1, sizeof(int));
 			dat->ydata[i][k] = malloc((ysize+1) * sizeof(double *));
 			for(size_t j=0; j< ysize+1; ++j)
 				dat->ydata[i][k][j] = calloc(gsize, sizeof(double));
 		}
 	}
-	dat->zchecker = malloc(ysize * sizeof(int **));
 	dat->zdata = malloc(ysize * sizeof(double ***));
 	for(size_t j=0; j< ysize; ++j){
-		dat->zchecker[j] = malloc(xsize * sizeof(int *));
 		dat->zdata[j] = malloc(xsize * sizeof(double **));
 		for(size_t i=0; i< xsize; ++i){
-			dat->zchecker[j][i] = calloc(zsize+1, sizeof(int));
 			dat->zdata[j][i] = malloc((zsize+1) * sizeof(double *));
 			for(size_t k=0; k< zsize+1; ++k)
 				dat->zdata[j][i][k] = calloc(gsize, sizeof(double));
 		}
 	}
-	bdy_check_edge(dat->xchecker, dat->ychecker, dat->zchecker, sconf);
 	return dat;
 }
 
@@ -62,37 +54,28 @@ void edat4_free(EDAT4 *dat)
 		for(size_t j=0; j< ysize; ++j){
 			for(size_t i=0; i< xsize+1; ++i)
 				free(dat->xdata[k][j][i]);
-			free(dat->xchecker[k][j]);
 			free(dat->xdata[k][j]);
 		}
-		free(dat->xchecker[k]);
 		free(dat->xdata[k]);
 	}
-	free(dat->xchecker);
 	free(dat->xdata);
 	for(size_t i=0; i< xsize; ++i){
 		for(size_t k=0; k< zsize; ++k){
 			for(size_t j=0; j< ysize+1; ++j)
 				free(dat->ydata[i][k][j]);
-			free(dat->ychecker[i][k]);
 			free(dat->ydata[i][k]);
 		}
-		free(dat->ychecker[i]);
 		free(dat->ydata[i]);
 	}
-	free(dat->ychecker);
 	free(dat->ydata);
 	for(size_t j=0; j< ysize; ++j){
 		for(size_t i=0; i< xsize; ++i){
 			for(size_t k=0; k< zsize+1; ++k)
 				free(dat->zdata[j][i][k]);
-			free(dat->zchecker[j][i]);
 			free(dat->zdata[j][i]);
 		}
-		free(dat->zchecker[j]);
 		free(dat->zdata[j]);
 	}
-	free(dat->zchecker);
 	free(dat->zdata);
 	free(dat);
 }
@@ -286,24 +269,24 @@ void edat4_copy(EDAT4 *tar_dat, const EDAT4 *src_dat)
 	for(size_t k=0; k<zsize; ++k)
 		for(size_t j=0; j<ysize; ++j)
 			for(size_t i=0; i<xsize+1; ++i){
-				tar_dat->xchecker[k][j][i] = src_dat->xchecker[k][j][i];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->xdata[k][j][i][g] = src_dat->xdata[k][j][i][g];
 			}
 	for(size_t i=0; i<xsize; ++i)
 		for(size_t k=0; k<zsize; ++k)
 			for(size_t j=0; j<ysize+1; ++j){
-				tar_dat->ychecker[i][k][j] = src_dat->ychecker[i][k][j];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->ydata[i][k][j][g] = src_dat->ydata[i][k][j][g];
 			}
 	for(size_t j=0; j<ysize; ++j)
 		for(size_t i=0; i<xsize; ++i)
 			for(size_t k=0; k<zsize+1; ++k){
-				tar_dat->zchecker[j][i][k] = src_dat->zchecker[j][i][k];
 				for(size_t g=0; g<gsize; ++g)
 					tar_dat->zdata[j][i][k][g] = src_dat->zdata[j][i][k][g];
 			}
+	tar_dat->xchecker = src_dat->xchecker;
+	tar_dat->ychecker = src_dat->ychecker;
+	tar_dat->zchecker = src_dat->zchecker;
 }
 
 void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream)

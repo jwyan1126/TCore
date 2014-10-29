@@ -4,6 +4,7 @@
 #include<stddef.h>
 #include<stdio.h>
 #include"sconf.h"
+#include"mapper.h"
 
 typedef struct
 {
@@ -22,7 +23,7 @@ typedef struct
 	double ****zdata; // indexed by [y][x][z][g]
 } EDAT4;
 
-EDAT4 *edat4_create(SCONF *sconf);
+EDAT4 *edat4_create(MAPPER *mapper);
 
 void edat4_free(EDAT4 *dat);
 

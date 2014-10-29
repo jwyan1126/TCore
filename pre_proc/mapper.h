@@ -11,18 +11,22 @@ typedef struct
 	size_t zi;
 } XYZ_IDX;
 
-// mapper should contains a checker!!!
 typedef struct
 {
+	size_t eg_size;
 	size_t xm_size;
 	size_t ym_size;
 	size_t zm_size;
 	size_t rt_size;
 	XYZ_IDX *one2three;
 	size_t ***three2one; //indexed [k][j][i]
+	int ***cchecker;
+	int ***xchecker;
+	int ***ychecker;
+	int ***zchecker;
 } MAPPER;
 
-MAPPER *mapper_create(const SCONF *sconf);
+MAPPER *mapper_create(SCONF *sconf);
 
 void mapper_free(MAPPER *mapper);
 

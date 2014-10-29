@@ -12,8 +12,8 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	MAT *M = mat_create(eg_size * rt_size);
 	MAT *S = mat_create(eg_size * rt_size);
 	MAT *F = mat_create(eg_size * rt_size);
-	EDAT4 *DFDM = edat4_create(sconf);
-	EDAT4 *DNOD = edat4_create(sconf);
+	EDAT4 *DFDM = edat4_create(mapper);
+	EDAT4 *DNOD = edat4_create(mapper);
 	cal_DFDM(DFDM, sconf, mesh);
 	cal_M(M, DFDM, DNOD, mapper, mesh);
 	cal_S(S, sconf,mapper, mesh);
@@ -48,7 +48,7 @@ void cal_M(MAT *M, EDAT4 *DFDM, EDAT4 *DNOD, const MAPPER *mapper, const MESH *m
 	CDAT4 *adfyr = mesh->adfyr;
 	CDAT4 *adfzl = mesh->adfzl;
 	CDAT4 *adfzr = mesh->adfzr;
-	int ***checker = mesh->bdy_checker;
+	int ***checker = mesh->cchecker;
 	mat_set_zeros(M);
 	for(size_t g=0; g<eg_size; ++g){
 		for(size_t idx=0; idx<rt_size; ++idx){

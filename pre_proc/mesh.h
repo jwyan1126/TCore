@@ -22,7 +22,10 @@ typedef struct
 	// Y+			00100000
 	// Z-			01000000
 	// Z+			10000000
-	int ***bdy_checker;
+	int ***cchecker;
+	int ***xchecker;
+	int ***ychecker;
+	int ***zchecker;
 	int ***mtrl_id; // indexed by [z][y][x]
 	CDAT3 *dx;
 	CDAT3 *dy;
@@ -44,7 +47,7 @@ typedef struct
 	CDAT4 *adfzr;
 } MESH;
 
-MESH *mesh_create(SCONF *sconf);
+MESH *mesh_create(SCONF *sconf, MAPPER *mapper);
 
 void mesh_free(MESH *mesh);
 

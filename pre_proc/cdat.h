@@ -4,17 +4,18 @@
 #include"sconf.h"
 #include<stddef.h>
 #include<stdio.h>
+#include"mapper.h"
 
 typedef struct
 {
 	size_t xsize;
 	size_t ysize;
 	size_t zsize;
-	int ***checker;
+	int ***cchecker;
 	double ***data;
 } CDAT3;
 
-CDAT3 *cdat3_create(SCONF *sconf);
+CDAT3 *cdat3_create(MAPPER *mapper);
 
 void cdat3_free(CDAT3 *dat);
 
@@ -30,11 +31,11 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
-	int ***checker;
+	int ***cchecker;
 	double ****data;
 } CDAT4;
 
-CDAT4 *cdat4_create(SCONF *sconf);
+CDAT4 *cdat4_create(MAPPER *mapper);
 
 void cdat4_free(CDAT4 *dat);
 
@@ -50,11 +51,11 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
-	int ***checker;
+	int ***cchecker;
 	double *****data;
 } CDAT5;
 
-CDAT5 *cdat5_create(SCONF *sconf);
+CDAT5 *cdat5_create(MAPPER *mapper);
 
 void cdat5_free(CDAT5 *dat);
 

@@ -4,7 +4,7 @@
 
 double pos_cal(size_t rz_s, size_t rz, const double *rz_span, const size_t *rz_subdiv);
 
-MESH *mesh_create(SCONF *sconf)
+MESH *mesh_create(SCONF *sconf, MAPPER *mapper)
 {
 	size_t eg_size = sconf->eg_size;
 	size_t xm_mesh_size = sconf->xm_mesh_size;
@@ -17,33 +17,34 @@ MESH *mesh_create(SCONF *sconf)
 	mesh->zm_mesh_size = zm_mesh_size;
 	// Index by [z,y,x,g,g']
 	mesh->mtrl_id = malloc(zm_mesh_size * sizeof(int **));
-	mesh->bdy_checker = malloc(zm_mesh_size * sizeof(int **));
 	for(size_t k=0; k < zm_mesh_size; ++k){
 		mesh->mtrl_id[k] = malloc(ym_mesh_size * sizeof(int *));
-		mesh->bdy_checker[k] = malloc(ym_mesh_size * sizeof(int *));
 		for(size_t j=0; j < ym_mesh_size; ++j){
 			mesh->mtrl_id[k][j] = calloc(xm_mesh_size, sizeof(int));
-			mesh->bdy_checker[k][j] = calloc(xm_mesh_size, sizeof(int));
 		}
 	}
-	mesh->dx = cdat3_create(sconf);
-	mesh->dy = cdat3_create(sconf);
-	mesh->dz = cdat3_create(sconf);
-	mesh->xpos = cdat3_create(sconf);
-	mesh->ypos = cdat3_create(sconf);
-	mesh->zpos = cdat3_create(sconf);
-	mesh->chi = cdat4_create(sconf);
-	mesh->dcoef = cdat4_create(sconf);
-	mesh->sa = cdat4_create(sconf);
-	mesh->sr = cdat4_create(sconf);
-	mesh->vsf = cdat4_create(sconf);
-	mesh->ss = cdat5_create(sconf);
-	mesh->adfxl = cdat4_create(sconf);
-	mesh->adfxr = cdat4_create(sconf);
-	mesh->adfyl = cdat4_create(sconf);
-	mesh->adfyr = cdat4_create(sconf);
-	mesh->adfzl = cdat4_create(sconf);
-	mesh->adfzr = cdat4_create(sconf);
+	mesh->cchecker = mapper->cchecker;
+	mesh->xchecker = mapper->xchecker;
+	mesh->ychecker = mapper->ychecker;
+	mesh->zchecker = mapper->zchecker;
+	mesh->dx = cdat3_create(mapper);
+	mesh->dy = cdat3_create(mapper);
+	mesh->dz = cdat3_create(mapper);
+	mesh->xpos = cdat3_create(mapper);
+	mesh->ypos = cdat3_create(mapper);
+	mesh->zpos = cdat3_create(mapper);
+	mesh->chi = cdat4_create(mapper);
+	mesh->dcoef = cdat4_create(mapper);
+	mesh->sa = cdat4_create(mapper);
+	mesh->sr = cdat4_create(mapper);
+	mesh->vsf = cdat4_create(mapper);
+	mesh->ss = cdat5_create(mapper);
+	mesh->adfxl = cdat4_create(mapper);
+	mesh->adfxr = cdat4_create(mapper);
+	mesh->adfyl = cdat4_create(mapper);
+	mesh->adfyr = cdat4_create(mapper);
+	mesh->adfzl = cdat4_create(mapper);
+	mesh->adfzr = cdat4_create(mapper);
 	
 	size_t xm_span_size = sconf->xm_span_size;
 	size_t ym_span_size = sconf->ym_span_size;
@@ -56,7 +57,6 @@ MESH *mesh_create(SCONF *sconf)
 	double *zspan_len = sconf->zspan_len;
 	int ***mtrl_set = sconf->mtrl_set;
 	MTRLLIB *mlib = sconf->mtrllib;
-	bdy_check(mesh->bdy_checker, sconf);
 	for(size_t zspan=0; zspan<zm_span_size; ++zspan)
 		for(size_t yspan=0; yspan<ym_span_size; ++yspan)
 			for(size_t xspan=0; xspan<xm_span_size; ++xspan){
@@ -64,7 +64,7 @@ MESH *mesh_create(SCONF *sconf)
 				for(size_t k = mblock.start_z; k <= mblock.end_z; ++k)
 					for(size_t j = mblock.start_y; j <= mblock.end_y; ++j)
 						for(size_t i = mblock.start_x; i <= mblock.end_x; ++i){
-							if(mesh->bdy_checker[k][j][i] & 0b00000001) continue;
+							if(mesh->cchecker[k][j][i] & 0b00000001) continue;
 							int mtrl_id = mtrl_set[xspan][yspan][zspan];
 							MTRL *m = mtrllib_get_fromid(mlib, mtrl_id);
 							if(m == NULL) {fprintf(stderr,"Mtrl ID = %d NOT found.\n", mtrl_id); exit(-1); }
@@ -103,19 +103,16 @@ void mesh_free(MESH *mesh)
 	for(size_t k=0; k< zm_mesh_size; ++k){
 		for(size_t j=0; j< ym_mesh_size; ++j){
 			free(mesh->mtrl_id[k][j]);
-			free(mesh->bdy_checker[k][j]);
 		}
 		free(mesh->mtrl_id[k]);
-		free(mesh->bdy_checker[k]);
 	}
 	free(mesh->mtrl_id);
-	free(mesh->bdy_checker);
 }
 
 inline int mesh_get_mtrl_id(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -126,7 +123,7 @@ inline int mesh_get_mtrl_id(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_dx(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -137,7 +134,7 @@ inline double mesh_get_dx(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_dy(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -148,7 +145,7 @@ inline double mesh_get_dy(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_dz(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -159,7 +156,7 @@ inline double mesh_get_dz(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_xpos(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -170,7 +167,7 @@ inline double mesh_get_xpos(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_ypos(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -181,7 +178,7 @@ inline double mesh_get_ypos(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_zpos(const MESH *mesh, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -192,7 +189,7 @@ inline double mesh_get_zpos(const MESH *mesh, size_t i, size_t j, size_t k)
 inline double mesh_get_chi(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -203,7 +200,7 @@ inline double mesh_get_chi(const MESH *mesh, size_t g, size_t i, size_t j, size_
 inline double mesh_get_dcoef(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -214,7 +211,7 @@ inline double mesh_get_dcoef(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_sa(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -225,7 +222,7 @@ inline double mesh_get_sa(const MESH *mesh, size_t g, size_t i, size_t j, size_t
 inline double mesh_get_sr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -236,7 +233,7 @@ inline double mesh_get_sr(const MESH *mesh, size_t g, size_t i, size_t j, size_t
 inline double mesh_get_vsf(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -247,7 +244,7 @@ inline double mesh_get_vsf(const MESH *mesh, size_t g, size_t i, size_t j, size_
 inline double mesh_get_ss(const MESH *mesh, size_t g, size_t from_g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -258,7 +255,7 @@ inline double mesh_get_ss(const MESH *mesh, size_t g, size_t from_g, size_t i, s
 inline double mesh_get_adfxl(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -269,7 +266,7 @@ inline double mesh_get_adfxl(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_adfxr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -280,7 +277,7 @@ inline double mesh_get_adfxr(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_adfyl(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -291,7 +288,7 @@ inline double mesh_get_adfyl(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_adfyr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -302,7 +299,7 @@ inline double mesh_get_adfyr(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_adfzl(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -313,7 +310,7 @@ inline double mesh_get_adfzl(const MESH *mesh, size_t g, size_t i, size_t j, siz
 inline double mesh_get_adfzr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k)
 {
 	#ifdef DEBUG
-	if(mesh->bdy_checker[k][j][i] & 0b00000001){
+	if(mesh->cchecker[k][j][i] & 0b00000001){
 		fprintf(stderr, "Specified mesh is not filled in.\n");
 		exit(-1);
 	}
@@ -341,12 +338,12 @@ void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream)
 				mesh_get_xpos(mesh, x, y, z),
 				mesh_get_ypos(mesh, x, y, z),
 				mesh_get_zpos(mesh, x, y, z),
-				(mesh->bdy_checker[z][y][x] & 0b00000100) != 0,
-				(mesh->bdy_checker[z][y][x] & 0b00001000) != 0,
-				(mesh->bdy_checker[z][y][x] & 0b00010000) != 0,
-				(mesh->bdy_checker[z][y][x] & 0b00100000) != 0,
-				(mesh->bdy_checker[z][y][x] & 0b01000000) != 0,
-				(mesh->bdy_checker[z][y][x] & 0b10000000) != 0);
+				(mesh->cchecker[z][y][x] & 0b00000100) != 0,
+				(mesh->cchecker[z][y][x] & 0b00001000) != 0,
+				(mesh->cchecker[z][y][x] & 0b00010000) != 0,
+				(mesh->cchecker[z][y][x] & 0b00100000) != 0,
+				(mesh->cchecker[z][y][x] & 0b01000000) != 0,
+				(mesh->cchecker[z][y][x] & 0b10000000) != 0);
 	}
 	fprintf(stream, "\n");
 	fprintf(stream, "1DID\t4DEID\t4DXID\t4DYID\t4DZID\tADFXL\tADFXR\tADFYL\tADFYR\tADFZL\tADFZR\n");
