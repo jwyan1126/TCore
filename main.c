@@ -19,9 +19,11 @@ int main()
 	SCONF *sconf = sconf_create(input);
 	MAPPER *mapper = mapper_create(sconf);
 	MESH *mesh = mesh_create(sconf, mapper);
-	SSOL *ssol = ssol_create(sconf->eg_size, sconf->rt_mesh_size);
+	SSOL *ssol = ssol_create(mapper);
 	steady_solver(ssol, sconf, mapper, mesh);
-	printf("%g\n", ssol->keff);
+	FILE *fresult = fopen("result.txt","w");
+	ssol_fprintf(ssol, fresult);
+	fclose(fresult);
 	
 	ssol_free(ssol);
 	mesh_free(mesh);

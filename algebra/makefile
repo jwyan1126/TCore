@@ -5,7 +5,7 @@ vec.o: vec.h vec.c
 mat.o: mat.h mat.c
 	cc -g -c -Wall -std=c99 mat.h mat.c -DDEBUG
 mvop.o: mvop.h mvop.c
-	cc -g -c -Wall -std=c99 mvop.h mvop.c -DDEBUG
+	cc -g -c -Wall -std=c99 mvop.h mvop.c -fopenmp -DDEBUG
 bicgstab.o: krylov.h bicgstab.c
 	cc -g -c -Wall -std=c99 krylov.h bicgstab.c -DDEBUG
 eigen.o: eigen.h eigen.c

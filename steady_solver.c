@@ -19,7 +19,7 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	cal_S(S, sconf,mapper, mesh);
 	mat_adds(M, S, -1.0);
 	cal_F(F, sconf, mapper, mesh);
-	VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux);
+	VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
 	double k;
 	if(!gspow_iter(&k, phi, M, F, 0.9, 512))
 		printf("Steady cal. converged.\n");
