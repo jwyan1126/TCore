@@ -12,15 +12,12 @@ typedef struct
 	size_t ysize;
 	size_t zsize;
 	size_t gsize;
-	// FILL  0001
-	// LFILL 0011
-	// RFILL 0101
 	int ***xchecker;
-	double ****xdata; // indexed by [z][y][x][g]
+	double ****xdata;
 	int ***ychecker;
-	double ****ydata; // indexed by [x][z][y][g]
+	double ****ydata;
 	int ***zchecker;
-	double ****zdata; // indexed by [y][x][z][g]
+	double ****zdata;
 } EDAT4;
 
 EDAT4 *edat4_create(MAPPER *mapper);

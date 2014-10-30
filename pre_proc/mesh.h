@@ -12,16 +12,6 @@ typedef struct
 	size_t xm_mesh_size;
 	size_t ym_mesh_size;
 	size_t zm_mesh_size;
-	// boundary checker indexed by [z][y][x]
-	// VALUE:
-	// NO FILL		00000001
-	// FILL BUT NOT BDY	00000010
-	// X-			00000100
-	// X+			00001000
-	// Y-			00010000
-	// Y+			00100000
-	// Z-			01000000
-	// Z+			10000000
 	int ***cchecker;
 	int ***xchecker;
 	int ***ychecker;

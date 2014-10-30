@@ -19,11 +19,23 @@ typedef struct
 	size_t zm_size;
 	size_t rt_size;
 	XYZ_IDX *one2three;
-	size_t ***three2one; //indexed [k][j][i]
-	int ***cchecker;
-	int ***xchecker;
-	int ***ychecker;
-	int ***zchecker;
+	size_t ***three2one; 	// indexed [k][j][i]
+	int ***cchecker; 	// indexed [k][j][i]
+				// cchecker:
+				// NO FILL		00000001
+				// FILL BUT NOT BDY	00000010
+				// X-			00000100
+				// X+			00001000
+				// Y-			00010000
+				// Y+			00100000
+				// Z-			01000000
+				// Z+			10000000
+	int ***xchecker; 	// indexed [k][j][i]
+	int ***ychecker; 	// indexed [i][k][j]
+	int ***zchecker; 	// indexed [j][i][k]
+				// FILL  0001
+				// LFILL 0011
+				// RFILL 0101
 } MAPPER;
 
 MAPPER *mapper_create(SCONF *sconf);

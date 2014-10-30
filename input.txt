@@ -1,0 +1,9 @@
+# INPUT CARD version 1.0
+
+# Num of Energy groups
+010010	2
+
+# Spans in x direction
+010020	
+# Spans in y direction
+# Spans in z direction

@@ -28,6 +28,8 @@ int pow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 	}
 	*lambda = val;
 	vec_free(x_last);
+	if(counter == max_iter_num)
+		fprintf(stderr ,"pow_iter NOT converged.\n");
 	return counter == max_iter_num? -1 : 0;
 }
 
@@ -61,6 +63,8 @@ int ipow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 	}
 	*lambda = 1.0 / val;
 	vec_free(x_last);
+	if(counter == max_iter_num)
+		fprintf(stderr, "ipow_iter NOT converged.\n");
 	return counter == max_iter_num? -1 : 0;
 }
 
@@ -99,6 +103,8 @@ int spow_iter(double *lambda, VEC *x, const MAT *A, double sigma, int max_iter_n
 	*lambda = 1.0 / val + sigma;
 	mat_free(sA);
 	vec_free(x_last);
+	if(counter == max_iter_num)
+		fprintf(stderr, "spow_iter NOT converged.\n");
 	return counter == max_iter_num? -1: 0;
 }
 
@@ -135,6 +141,8 @@ int gipow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, int max_iter_
 	*lambda = 1.0 / val;
 	vec_free(rvec);
 	vec_free(x_last);
+	if(counter == max_iter_num)
+		fprintf(stderr, "gipow_iter NOT converged.\n");
 	return counter == max_iter_num? -1 : 0;
 }
 
@@ -175,5 +183,7 @@ int gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma,
 	vec_free(rvec);
 	mat_free(sA);
 	vec_free(x_last);
+	if(counter == max_iter_num)
+		fprintf(stderr, "gspow_iter NOT converged.\n");
 	return counter == max_iter_num? -1: 0;
 }

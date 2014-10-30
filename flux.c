@@ -22,6 +22,28 @@ void flux_free(FLUX *flux)
 	free(flux);
 }
 
+void flux_copy(FLUX *tar_flux, FLUX *src_flux)
+{
+	#ifdef DEBUG
+	if(tar_flux->eg_size != src_flux->eg_size ||
+	   tar_flux->xm_size != src_flux->xm_size ||
+	   tar_flux->ym_size != src_flux->ym_size ||
+	   tar_flux->zm_size != src_flux->zm_size ||
+	   tar_flux->rt_size != src_flux->rt_size){
+		fprintf(stderr, "Size incompatible.\n");
+		exit(-1);
+	}
+	#endif
+	tar_flux->eg_size = src_flux->eg_size;
+	tar_flux->xm_size = src_flux->xm_size;
+	tar_flux->ym_size = src_flux->ym_size;
+	tar_flux->zm_size = src_flux->zm_size;
+	tar_flux->rt_size = src_flux->rt_size;
+	for(size_t i=0; i< eg_size * rt_size; ++i)
+		tar_flux->data[i] = src_flux->data[i];
+	tar_flux->mapper = src_flux->mapper;
+}
+
 void flux_fprintf(const FLUX *flux, FILE *stream)
 {
 	MAPPER *mapper = flux->mapper;
@@ -59,4 +81,26 @@ void flux_normalize(FLUX *flux)
 	s /= (rt_size * eg_size);
 	for(size_t i=0; i<rt_size * eg_size; ++i)
 		flux->data[i] /= s;
+}
+
+double flux_get_val(FLUX *flux, size_t g, size_t i, size_t j, size_t k)
+{
+	#ifdef DEBUG
+	size_t eg_size = flux->eg_size;
+	size_t xm_size = flux->xm_size;
+	size_t ym_size = flux->ym_size;
+	size_t zm_size = flux->zm_size;
+	int ***cchecker = flux->mapper->cchecker;
+	if(g >= eg_size || i >= xm_size || j >= ym_size || k >= zm_size){
+		fprintf(stderr, "Index out of range.\n");
+		exit(-1);
+	}
+	if(cchecker[k][j][i] & 0b00000001){
+		fprintf(stderr, "No mtrl filled in.\n");
+		exit(-1);
+	}
+	#endif
+	size_t rt_size = flux->rt_size;
+	size_t idx = g*rt_size + mapper_get1Didx(flux->mapper, i, j, k);
+	return flux->data[idx];
 }

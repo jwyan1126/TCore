@@ -18,8 +18,12 @@ FLUX *flux_create(MAPPER *mapper);
 
 void flux_free(FLUX *flux);
 
+void flux_copy(FLUX *tar_flux, FLUX *src_flux);
+
 void flux_fprintf(const FLUX *flux, FILE *stream);
 
 void flux_normalize(FLUX *flux);
+
+double flux_get_val(FLUX *flux, size_t g, size_t i, size_t j, size_t k);
 
 #endif

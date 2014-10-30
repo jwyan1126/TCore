@@ -14,18 +14,26 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	MAT *F = mat_create(eg_size * rt_size);
 	EDAT4 *DFDM = edat4_create(mapper);
 	EDAT4 *DNOD = edat4_create(mapper);
+	LEAK *leak = leak_create(mapper);
+	
 	cal_DFDM(DFDM, sconf, mesh);
-	cal_M(M, DFDM, DNOD, mapper, mesh);
 	cal_S(S, sconf,mapper, mesh);
-	mat_adds(M, S, -1.0);
 	cal_F(F, sconf, mapper, mesh);
-	VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
-	double k;
-	if(!gspow_iter(&k, phi, M, F, 0.9, 512))
-		printf("Steady cal. converged.\n");
-	else
-		printf("Steady cal. NOT converged.\n");
-	ssol->keff = 1.0 / k;
+	double res = 1.0;
+	while(res > 1e-6){
+		cal_M(M, DFDM, DNOD, mapper, mesh);
+		mat_adds(M, S, -1.0);
+		VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
+		double k;
+		gspow_iter(&k, phi, M, F, 0.0, 512);
+		ssol->keff = 1.0 / k;
+
+		cal_leakage(leak, Jn);
+		cal_jcur(Jn, leak, ssol);
+		cal_DNOD(DNOD, DFDM, Jn, ssol);
+	}
+
+	leak_free(mapper);
 	edat4_free(DNOD);
 	edat4_free(DFDM);
 	vec_ref_free(phi);
