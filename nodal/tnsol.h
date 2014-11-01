@@ -1,9 +1,10 @@
-#ifndef TNINP_H
-#define TNINP_H
+#ifndef TNSOL_H
+#define TNSOL_H
 
 typedef struct
 {
 	size_t eg_size;
+	double keff;
 	double *Dgi;
 	double *Dgj;
 	double dui;
@@ -24,10 +25,13 @@ typedef struct
 	double *lgj1;
 	double *lgi2;
 	double *lgj2;
-} TNINP;
+	double *adfgi;
+	double *adfgj;
+	double *J; // result
+} TNSOL;
 
-TNINP *tninp_create(size_t eg_size);
+TNSOL *tnsol_create(size_t eg_size);
 
-void tninp_free(TNINP *tninp);
+void tnsol_free(TNSOL *tnsol);
 
 #endif

@@ -3,7 +3,7 @@
 #include"mat.h"
 #include"vec.h"
 #include<stddef.h>
-#include"krylov.h"
+#include"ksp.h"
 
 extern MATSOLVER mat_solver;
 

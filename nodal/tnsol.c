@@ -1,8 +1,8 @@
-#include"tninp.h"
+#include"tnsol.h"
 
-TNINP *tninp_create(size_t eg_size)
+TNSOL *tnsol_create(size_t eg_size)
 {
-	TNINP *tn = malloc(TNINP);
+	TNSOL *tn = malloc(TNSOL);
 	tn->eg_size = eg_size;
 	tn->Dgi = calloc(eg_size, sizeof(double));
 	tn->Dgj = calloc(eg_size, sizeof(double));
@@ -26,10 +26,11 @@ TNINP *tninp_create(size_t eg_size)
 	tn->lgj1 = calloc(eg_size, sizeof(double));
 	tn->lgi2 = calloc(eg_size, sizeof(double));
 	tn->lgj2 = calloc(eg_size, sizeof(double));
+	tn->J = calloc(eg_size, sizeof(double));
 	return tn;
 }
 
-void tninp_free(TNINP *tn)
+void tnsol_free(TNSOL *tn)
 {
 	size_t eg_size = tn->eg_size;
 	free(tn->Dgi);
@@ -52,5 +53,6 @@ void tninp_free(TNINP *tn)
 	free(tn->lgj1);
 	free(tn->lgi2);
 	free(tn->lgj2);
+	free(tn->J);
 	free(tn);
 }

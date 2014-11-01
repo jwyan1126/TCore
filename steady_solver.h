@@ -11,6 +11,8 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh);
 
 void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh);
 
+void cal_DNOD(EDAT4 *DNOD, const MESH *mesh, const EDAT4 *DFDM, const EDAT4 *Jn, const SSOL *ssol);
+
 void cal_M(MAT *M, EDAT4 *DFDM, EDAT4 *DNOD, const MAPPER *mapper, const MESH *mesh);
 
 void cal_S(MAT *S, const SCONF *sconf, const MAPPER *mapper, const MESH *mesh);

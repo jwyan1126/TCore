@@ -14,6 +14,7 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	MAT *F = mat_create(eg_size * rt_size);
 	EDAT4 *DFDM = edat4_create(mapper);
 	EDAT4 *DNOD = edat4_create(mapper);
+	EDAT4 *Jn = edat4_create(mapper);
 	LEAK *leak = leak_create(mapper);
 	
 	cal_DFDM(DFDM, sconf, mesh);
@@ -28,12 +29,13 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 		gspow_iter(&k, phi, M, F, 0.0, 512);
 		ssol->keff = 1.0 / k;
 
-		cal_leakage(leak, Jn);
-		cal_jcur(Jn, leak, ssol);
-		cal_DNOD(DNOD, DFDM, Jn, ssol);
+		cal_leakage(leak, mesh, Jn);
+		cal_jcur(Jn, mesh, leak, ssol);
+		cal_DNOD(DNOD, mesh, DFDM, Jn, ssol);
 	}
 
-	leak_free(mapper);
+	leak_free(leak);
+	edat4_free(Jn);
 	edat4_free(DNOD);
 	edat4_free(DFDM);
 	vec_ref_free(phi);

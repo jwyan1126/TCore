@@ -24,4 +24,6 @@ LEAK *leak_create(MAPPER *mapper);
 
 void leak_free(LEAK *leak);
 
+void cal_leakage(LEAK *leak, const MESH *mesh, const JCUR *jn);
+
 #endif

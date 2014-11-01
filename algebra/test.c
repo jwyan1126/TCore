@@ -2,7 +2,7 @@
 #include"vec.h"
 #include"mat.h"
 #include"mvop.h"
-#include"krylov.h"
+#include"ksp.h"
 #include<time.h>
 #include<stdlib.h>
 #include"eigen.h"
@@ -12,8 +12,8 @@ MATSOLVER mat_solver;
 int main()
 {
 	mat_solver = bicgstab;
-	srand((int)time(NULL));
-	size_t size = 512;
+	//srand((int)time(NULL));
+	size_t size = 16;
 	MAT *A = mat_create(size);
 	MAT *B = mat_create(size);
 	mat_set_rand(A);
