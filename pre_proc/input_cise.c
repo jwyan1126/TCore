@@ -127,11 +127,11 @@ INPUT *input_create(const char *path)
 
 	for(size_t i=0; i<xm_span_size; ++i){
 		input->xspan_len[i] = 15.0;
-		input->xspan_subdiv[i] = 4;
+		input->xspan_subdiv[i] = 1;
 	}
 	for(size_t j=0; j<ym_span_size; ++j){
 		input->yspan_len[j] = 15.0;
-		input->yspan_subdiv[j] = 4;
+		input->yspan_subdiv[j] = 1;
 	}
 	for(size_t k=0; k<zm_span_size; ++k){
 		input->zspan_len[k] = 1.0;

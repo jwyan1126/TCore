@@ -51,10 +51,7 @@ int ipow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 		counter++;
 		vec_copy(x_last, x);
 		val_last = val;
-		if((*mat_solver)(x, A, x_last, 256)){
-			fprintf(stderr, "mat_solver not converged.\n");
-			exit(-1);
-		}
+		(*mat_solver)(x, A, x_last, 256);
 		vec_scale(x, 1.0/val_last);
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
@@ -90,10 +87,7 @@ int spow_iter(double *lambda, VEC *x, const MAT *A, double sigma, int max_iter_n
 		counter++;
 		vec_copy(x_last, x);
 		val_last = val;
-		if((*mat_solver)(x, sA, x_last, 256)){
-			fprintf(stderr, "mat_solver not converged.\n");
-			exit(-1);
-		}
+		(*mat_solver)(x, sA, x_last, 256);
 		vec_scale(x, 1.0/val_last);
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
@@ -128,10 +122,7 @@ int gipow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, int max_iter_
 		vec_copy(x_last, x);
 		val_last = val;
 		mat_vec_mult_assign(rvec, B, x_last, 1.0);
-		if((*mat_solver)(x, A, rvec, 256)){
-			fprintf(stderr, "mat_solver not converged.\n");
-			exit(-1);
-		}
+		(*mat_solver)(x, A, rvec, 256);
 		vec_scale(x, 1.0/val_last);
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
@@ -169,13 +160,11 @@ int gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma,
 		vec_copy(x_last, x);
 		val_last = val;
 		mat_vec_mult_assign(rvec, B, x_last, 1.0);
-		if((*mat_solver)(x, sA, rvec, 256)){
-			fprintf(stderr, "mat_solver not converged.\n");
-			exit(-1);
-		}
+		(*mat_solver)(x, sA, rvec, 256);
 		vec_scale(x, 1.0/val_last);
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
+		//printf("Res=%g\n", res);
 		if(res < 1e-6) break;
 	}
 	*lambda = 1.0 / val + sigma;

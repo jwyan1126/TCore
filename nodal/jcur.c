@@ -73,9 +73,9 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 							tn->ssgi[g][from_g] = cdat5_get_val(mesh->ss, g, from_g, i, j-1, k);
 						tn->chigi[g] = cdat4_get_val(mesh->chi, g, i, j-1, k);
 						tn->phigi[g] = flux_get_val(ssol->flux, g, i, j-1, k);
-						tn->lgi0[g] = cdat4_get_val(leak->lx0, g, i, j-1, k);
-						tn->lgi1[g] = cdat4_get_val(leak->lx1, g, i, j-1, k);
-						tn->lgi2[g] = cdat4_get_val(leak->lx2, g, i, j-1, k);
+						tn->lgi0[g] = cdat4_get_val(leak->ly0, g, i, j-1, k);
+						tn->lgi1[g] = cdat4_get_val(leak->ly1, g, i, j-1, k);
+						tn->lgi2[g] = cdat4_get_val(leak->ly2, g, i, j-1, k);
 						tn->adfgi[g] = cdat4_get_val(mesh->adfyr, g, i, j-1, k);
 					}
 				}
@@ -89,9 +89,9 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 							tn->ssgj[g][from_g] = cdat5_get_val(mesh->ss, g, from_g, i, j, k);
 						tn->chigj[g] = cdat4_get_val(mesh->chi, g, i, j, k);
 						tn->phigj[g] = flux_get_val(ssol->flux, g, i, j, k);
-						tn->lgj0[g] = cdat4_get_val(leak->lx0, g, i, j, k);
-						tn->lgj1[g] = cdat4_get_val(leak->lx1, g, i, j, k);
-						tn->lgj2[g] = cdat4_get_val(leak->lx2, g, i, j, k);
+						tn->lgj0[g] = cdat4_get_val(leak->ly0, g, i, j, k);
+						tn->lgj1[g] = cdat4_get_val(leak->ly1, g, i, j, k);
+						tn->lgj2[g] = cdat4_get_val(leak->ly2, g, i, j, k);
 						tn->adfgj[g] = cdat4_get_val(mesh->adfyl, g, i, j, k);
 					}
 				}
@@ -118,9 +118,9 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 							tn->ssgi[g][from_g] = cdat5_get_val(mesh->ss, g, from_g, i, j, k-1);
 						tn->chigi[g] = cdat4_get_val(mesh->chi, g, i, j, k-1);
 						tn->phigi[g] = flux_get_val(ssol->flux, g, i, j, k-1);
-						tn->lgi0[g] = cdat4_get_val(leak->lx0, g, i, j, k-1);
-						tn->lgi1[g] = cdat4_get_val(leak->lx1, g, i, j, k-1);
-						tn->lgi2[g] = cdat4_get_val(leak->lx2, g, i, j, k-1);
+						tn->lgi0[g] = cdat4_get_val(leak->lz0, g, i, j, k-1);
+						tn->lgi1[g] = cdat4_get_val(leak->lz1, g, i, j, k-1);
+						tn->lgi2[g] = cdat4_get_val(leak->lz2, g, i, j, k-1);
 						tn->adfgi[g] = cdat4_get_val(mesh->adfzr, g, i, j, k-1);
 					}
 				}
@@ -134,9 +134,9 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 							tn->ssgj[g][from_g] = cdat5_get_val(mesh->ss, g, from_g, i, j, k);
 						tn->chigj[g] = cdat4_get_val(mesh->chi, g, i, j, k);
 						tn->phigj[g] = flux_get_val(ssol->flux, g, i, j, k);
-						tn->lgj0[g] = cdat4_get_val(leak->lx0, g, i, j, k);
-						tn->lgj1[g] = cdat4_get_val(leak->lx1, g, i, j, k);
-						tn->lgj2[g] = cdat4_get_val(leak->lx2, g, i, j, k);
+						tn->lgj0[g] = cdat4_get_val(leak->lz0, g, i, j, k);
+						tn->lgj1[g] = cdat4_get_val(leak->lz1, g, i, j, k);
+						tn->lgj2[g] = cdat4_get_val(leak->lz2, g, i, j, k);
 						tn->adfgj[g] = cdat4_get_val(mesh->adfzl, g, i, j, k);
 					}
 				}

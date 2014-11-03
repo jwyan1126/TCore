@@ -33,15 +33,15 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 		mat_adds(M, S, -1.0);
 		double k;
 		vec_copy(phi_last, phi);
-		gspow_iter(&k, phi, M, F, 0.0, 512);
+		gspow_iter(&k, phi, M, F, 0.8, 512);
 		res = vec_res_2norm(phi, phi_last);
+		counter++;
 		ssol->keff = 1.0 / k;
+		printf("nonlinear iter = %d\tres = %g\tkeff = %g\n", counter, res, ssol->keff);
 		cal_leakage(leak, mesh, Jn);
 		cal_jcur(Jn, mesh, leak, ssol);
 		cal_DNOD(DNOD, mesh, DFDM, Jn, ssol);
-		counter++;
 	}
-	printf("nonlinear iter = %d\n", counter);
 	printf("keff=%g\n",ssol->keff);
 	vec_free(phi_last);
 	leak_free(leak);
