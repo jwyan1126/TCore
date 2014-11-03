@@ -1,5 +1,6 @@
-pre_proc.a(list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o checker.o): list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o checker.o
-	ar rc pre_proc.a list.o mtrl.o mtrllib.o input.o sconf.o mapper.o mesh.o cdat.o edat.o checker.o
+PRE = input.o list.o mtrl.o mtrllib.o sconf.o mapper.o mesh.o cdat.o edat.o checker.o
+pre_proc.a($(PRE)): $(PRE)
+	ar rc pre_proc.a $(PRE)
 input.o: input.h input.c
 	cc -g -c -Wall -std=c99 input.h input.c -DDEBUG
 sconf.o: sconf.h sconf.c

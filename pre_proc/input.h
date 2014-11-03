@@ -17,6 +17,9 @@ typedef struct
 	size_t *yspan_subdiv;
 	size_t *zspan_subdiv;
 
+	// 0 ref
+	// 1 zero-flux
+	// 2 vac
 	int xl_bdy;
 	int xr_bdy;
 	int yl_bdy;

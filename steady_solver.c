@@ -4,6 +4,10 @@
 #include"algebra/vec.h"
 #include"algebra/eigen.h"
 #include<stdlib.h>
+#include"nodal/leak.h"
+#include"nodal/jcur.h"
+#include"nodal/tnsol.h"
+#include"nodal/SANM/sanm.h"
 
 void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 {
@@ -16,24 +20,30 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	EDAT4 *DNOD = edat4_create(mapper);
 	EDAT4 *Jn = edat4_create(mapper);
 	LEAK *leak = leak_create(mapper);
+	VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
+	VEC *phi_last = vec_create(eg_size * rt_size);
 	
-	cal_DFDM(DFDM, sconf, mesh);
+	cal_DFDM(DFDM, mesh);
 	cal_S(S, sconf,mapper, mesh);
 	cal_F(F, sconf, mapper, mesh);
 	double res = 1.0;
+	int counter = 0;
 	while(res > 1e-6){
 		cal_M(M, DFDM, DNOD, mapper, mesh);
 		mat_adds(M, S, -1.0);
-		VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
 		double k;
+		vec_copy(phi_last, phi);
 		gspow_iter(&k, phi, M, F, 0.0, 512);
+		res = vec_res_2norm(phi, phi_last);
 		ssol->keff = 1.0 / k;
-
 		cal_leakage(leak, mesh, Jn);
 		cal_jcur(Jn, mesh, leak, ssol);
 		cal_DNOD(DNOD, mesh, DFDM, Jn, ssol);
+		counter++;
 	}
-
+	printf("nonlinear iter = %d\n", counter);
+	printf("keff=%g\n",ssol->keff);
+	vec_free(phi_last);
 	leak_free(leak);
 	edat4_free(Jn);
 	edat4_free(DNOD);
@@ -67,7 +77,7 @@ void cal_M(MAT *M, EDAT4 *DFDM, EDAT4 *DNOD, const MAPPER *mapper, const MESH *m
 			size_t j = xyz.yi;
 			size_t k = xyz.zi;
 			size_t p = g*rt_size + idx;
-			double mat_h = 0;
+			double mat_h = 0.0;
 			mat_h += cdat4_get_val(sr, g, i, j, k);
 			mat_h += (edat4_get_xrval(DFDM,g,i,j,k) - edat4_get_xrval(DNOD,g,i,j,k)) * cdat4_get_val(adfxr,g,i,j,k) / cdat3_get_val(dx,i,j,k);
 			mat_h += (edat4_get_xlval(DFDM,g,i,j,k) + edat4_get_xlval(DNOD,g,i,j,k)) * cdat4_get_val(adfxl,g,i,j,k) / cdat3_get_val(dx,i,j,k);

@@ -34,11 +34,13 @@ void flux_copy(FLUX *tar_flux, FLUX *src_flux)
 		exit(-1);
 	}
 	#endif
-	tar_flux->eg_size = src_flux->eg_size;
+	size_t eg_size = src_flux->eg_size;
+	size_t rt_size = src_flux->rt_size;
+	tar_flux->eg_size = eg_size;
+	tar_flux->rt_size = rt_size;
 	tar_flux->xm_size = src_flux->xm_size;
 	tar_flux->ym_size = src_flux->ym_size;
 	tar_flux->zm_size = src_flux->zm_size;
-	tar_flux->rt_size = src_flux->rt_size;
 	for(size_t i=0; i< eg_size * rt_size; ++i)
 		tar_flux->data[i] = src_flux->data[i];
 	tar_flux->mapper = src_flux->mapper;

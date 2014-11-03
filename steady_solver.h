@@ -9,7 +9,7 @@
 
 void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh);
 
-void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh);
+void cal_DFDM(EDAT4 *DFDM, const MESH *mesh);
 
 void cal_DNOD(EDAT4 *DNOD, const MESH *mesh, const EDAT4 *DFDM, const EDAT4 *Jn, const SSOL *ssol);
 

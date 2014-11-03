@@ -176,7 +176,6 @@ int gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma,
 		vec_scale(x, 1.0/val_last);
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
-		printf("Res=%g\n", res);
 		if(res < 1e-6) break;
 	}
 	*lambda = 1.0 / val + sigma;

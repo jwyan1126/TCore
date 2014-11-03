@@ -15,6 +15,12 @@ MESH *mesh_create(SCONF *sconf, MAPPER *mapper)
 	mesh->xm_mesh_size = xm_mesh_size;
 	mesh->ym_mesh_size = ym_mesh_size;
 	mesh->zm_mesh_size = zm_mesh_size;
+	mesh->xl_bdy = sconf->xl_bdy;
+	mesh->xr_bdy = sconf->xr_bdy;
+	mesh->yl_bdy = sconf->yl_bdy;
+	mesh->yr_bdy = sconf->yr_bdy;
+	mesh->zl_bdy = sconf->zl_bdy;
+	mesh->zr_bdy = sconf->zr_bdy;
 	// Index by [z,y,x,g,g']
 	mesh->mtrl_id = malloc(zm_mesh_size * sizeof(int **));
 	for(size_t k=0; k < zm_mesh_size; ++k){

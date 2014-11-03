@@ -17,6 +17,12 @@ typedef struct
 	int ***ychecker;
 	int ***zchecker;
 	int ***mtrl_id; // indexed by [z][y][x]
+	int xl_bdy;
+	int xr_bdy;
+	int yl_bdy;
+	int yr_bdy;
+	int zl_bdy;
+	int zr_bdy;
 	CDAT3 *dx;
 	CDAT3 *dy;
 	CDAT3 *dz;

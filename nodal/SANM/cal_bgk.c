@@ -1,3 +1,5 @@
+#include"cal_bgk.h"
+
 inline int delta_func(size_t g, size_t from_g)
 {
 	return g == from_g? 1:0;

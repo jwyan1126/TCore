@@ -8,7 +8,7 @@
 #include"pre_proc/mesh.h"
 #include"ssol.h"
 #include"steady_solver.h"
-#include"algebra/krylov.h"
+#include"algebra/ksp.h"
 
 MATSOLVER mat_solver;
 
@@ -21,9 +21,6 @@ int main()
 	MESH *mesh = mesh_create(sconf, mapper);
 	SSOL *ssol = ssol_create(mapper);
 	steady_solver(ssol, sconf, mapper, mesh);
-	FILE *fresult = fopen("result.txt","w");
-	ssol_fprintf(ssol, fresult);
-	fclose(fresult);
 	
 	ssol_free(ssol);
 	mesh_free(mesh);

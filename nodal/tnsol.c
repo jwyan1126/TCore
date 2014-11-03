@@ -1,8 +1,9 @@
 #include"tnsol.h"
+#include<stdlib.h>
 
 TNSOL *tnsol_create(size_t eg_size)
 {
-	TNSOL *tn = malloc(TNSOL);
+	TNSOL *tn = malloc(sizeof(TNSOL));
 	tn->eg_size = eg_size;
 	tn->Dgi = calloc(eg_size, sizeof(double));
 	tn->Dgj = calloc(eg_size, sizeof(double));
@@ -26,6 +27,8 @@ TNSOL *tnsol_create(size_t eg_size)
 	tn->lgj1 = calloc(eg_size, sizeof(double));
 	tn->lgi2 = calloc(eg_size, sizeof(double));
 	tn->lgj2 = calloc(eg_size, sizeof(double));
+	tn->adfgi = calloc(eg_size, sizeof(double));
+	tn->adfgj = calloc(eg_size, sizeof(double));
 	tn->J = calloc(eg_size, sizeof(double));
 	return tn;
 }
@@ -53,6 +56,8 @@ void tnsol_free(TNSOL *tn)
 	free(tn->lgj1);
 	free(tn->lgi2);
 	free(tn->lgj2);
+	free(tn->adfgi);
+	free(tn->adfgj);
 	free(tn->J);
 	free(tn);
 }

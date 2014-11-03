@@ -1,18 +1,18 @@
 #include"steady_solver.h"
 #include<stdlib.h>
 
-void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh)
+void cal_DFDM(EDAT4 *DFDM, const MESH *mesh)
 {
-	size_t eg_size = sconf->eg_size;
-	size_t xm_size = sconf->xm_mesh_size;
-	size_t ym_size = sconf->ym_mesh_size;
-	size_t zm_size = sconf->zm_mesh_size;
-	int xl_bdy = sconf->xl_bdy;
-	int xr_bdy = sconf->xr_bdy;
-	int yl_bdy = sconf->yl_bdy;
-	int yr_bdy = sconf->yr_bdy;
-	int zl_bdy = sconf->zl_bdy;
-	int zr_bdy = sconf->zr_bdy;
+	size_t eg_size = mesh->eg_size;
+	size_t xm_size = mesh->xm_mesh_size;
+	size_t ym_size = mesh->ym_mesh_size;
+	size_t zm_size = mesh->zm_mesh_size;
+	int xl_bdy = mesh->xl_bdy;
+	int xr_bdy = mesh->xr_bdy;
+	int yl_bdy = mesh->yl_bdy;
+	int yr_bdy = mesh->yr_bdy;
+	int zl_bdy = mesh->zl_bdy;
+	int zr_bdy = mesh->zr_bdy;
 	CDAT3 *dx = mesh->dx;
 	CDAT3 *dy = mesh->dy;
 	CDAT3 *dz = mesh->dz;
@@ -27,7 +27,6 @@ void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh)
 				if(!(xchecker[k][j][i] & 0b0001)) continue;
 				for(size_t g=0; g<eg_size; ++g){
 					if(xchecker[k][j][i] & 0b0010){
-						if(xchecker[k][j][i] & 0b0100) {fprintf(stderr, "inner error\n"); exit(-1);}//DEBUG
 						if(xl_bdy == 0)
 							DFDM->xdata[k][j][i][g] = 0.0;
 						else if(xl_bdy == 1){
@@ -41,7 +40,6 @@ void cal_DFDM(EDAT4 *DFDM, const SCONF *sconf, const MESH *mesh)
 						else {fprintf(stderr, "bdy unrecognized.\n"); exit(-1);}
 					}
 					else if(xchecker[k][j][i] & 0b0100){
-						if(xchecker[k][j][i] & 0b0010) {fprintf(stderr, "inner error\n"); exit(-1);}
 						if(xr_bdy == 0)
 							DFDM->xdata[k][j][i][g] = 0.0;
 						else if(xr_bdy == 1){

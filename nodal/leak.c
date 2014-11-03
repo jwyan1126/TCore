@@ -1,4 +1,6 @@
 #include"leak.h"
+#include<stdlib.h>
+#include<stddef.h>
 
 LEAK *leak_create(MAPPER *mapper)
 {
@@ -23,24 +25,24 @@ LEAK *leak_create(MAPPER *mapper)
 
 void leak_free(LEAK *leak)
 {
-	cdat4_free(lx0);
-	cdat4_free(lx1);
-	cdat4_free(lx2);
-	cdat4_free(ly0);
-	cdat4_free(ly1);
-	cdat4_free(ly2);
-	cdat4_free(lz0);
-	cdat4_free(lz1);
-	cdat4_free(lz2);
+	cdat4_free(leak->lx0);
+	cdat4_free(leak->lx1);
+	cdat4_free(leak->lx2);
+	cdat4_free(leak->ly0);
+	cdat4_free(leak->ly1);
+	cdat4_free(leak->ly2);
+	cdat4_free(leak->lz0);
+	cdat4_free(leak->lz1);
+	cdat4_free(leak->lz2);
 	free(leak);
 }
 
 void cal_leakage(LEAK *leak, const MESH *mesh, const EDAT4 *jn)
 {
-	size_t eg_size = jn->eg_size;
-	size_t xm_size = jn->xm_size;
-	size_t ym_size = jn->ym_size;
-	size_t zm_size = jn->zm_size;
+	size_t eg_size = leak->eg_size;
+	size_t xm_size = leak->xm_size;
+	size_t ym_size = leak->ym_size;
+	size_t zm_size = leak->zm_size;
 	for(size_t k=0; k<zm_size; ++k)
 		for(size_t j=0; j<ym_size; ++j)
 			for(size_t i=0; i<xm_size; ++i){

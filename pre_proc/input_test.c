@@ -40,11 +40,11 @@ INPUT *input_create(const char *path)
 		input->xspan_subdiv[i] = 13;
 	}
 	for(size_t j=0; j<ym_span_size; ++j){
-		input->yspan_len[j] = 260.0;
+		input->yspan_len[j] = 1.0;
 		input->yspan_subdiv[j] = 1;
 	}
 	for(size_t k=0; k<zm_span_size; ++k){
-		input->zspan_len[k] = 260.0;
+		input->zspan_len[k] = 1.0;
 		input->zspan_subdiv[k] = 1;
 	}
 
@@ -64,8 +64,8 @@ INPUT *input_create(const char *path)
 		ss[i] = calloc(2,sizeof(double));
 
 	chi[0] = 1.0; chi[1] = 0.0;
-	dcoef[0] = 1.0 /(3.0* 2.368355e-1);
-	dcoef[1] = 1.0 /(3.0* 9.082422e-1);
+	dcoef[0] = 1 /(3* 2.368355e-1);
+	dcoef[1] = 1 /(3* 9.082422e-1);
 	sa[0] = 8.603111e-3;
 	sa[1] = 7.853449e-2;
 	vsf[0] = 6.160544e-3;

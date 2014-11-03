@@ -16,4 +16,8 @@ int bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
 // Solve Ax=b with gauss_seidel
 int gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
 
+void LU_solve(VEC *x, const MAT *A, const VEC *b);
+
+void LU_decomposition(MAT *LU, const MAT *A);
+
 #endif

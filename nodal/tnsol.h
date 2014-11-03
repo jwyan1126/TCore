@@ -1,10 +1,13 @@
 #ifndef TNSOL_H
 #define TNSOL_H
 
+#include<stddef.h>
+
 typedef struct
 {
 	size_t eg_size;
 	double keff;
+	int bdy;
 	double *Dgi;
 	double *Dgj;
 	double dui;

@@ -1,4 +1,12 @@
 #include"sanm.h"
+#include<stdlib.h>
+#include<stdio.h>
+#include<math.h>
+#include"../../algebra/mat.h"
+#include"../../algebra/vec.h"
+#include"../../algebra/ksp.h"
+#include"cal_bgk.h"
+#include<limits.h>
 
 void sanm_inner(TNSOL *tn)
 {
@@ -13,6 +21,7 @@ void sanm_inner(TNSOL *tn)
 	double *lgi0 = tn->lgi0;	double *lgj0 = tn->lgj0;
 	double *lgi1 = tn->lgi1;	double *lgj1 = tn->lgj1;
 	double *lgi2 = tn->lgi2;	double *lgj2 = tn->lgj2;
+	double *adfgi = tn->adfgi;	double *adfgj = tn->adfgj;
 	double keff = tn->keff;		double *J = tn->J;
 	double *dgxi = malloc(eg_size * sizeof(double));
 	double *dgxj = malloc(eg_size * sizeof(double));
@@ -23,7 +32,7 @@ void sanm_inner(TNSOL *tn)
 	double *agi3 = malloc(eg_size * sizeof(double));
 	double *agj3 = malloc(eg_size * sizeof(double));
 	double *agi4 = malloc(eg_size * sizeof(double));
-	double *agj5 = malloc(eg_size * sizeof(double));
+	double *agj4 = malloc(eg_size * sizeof(double));
 	double *alpha_gxi = malloc(eg_size * sizeof(double));
 	double *alpha_gxj = malloc(eg_size * sizeof(double));
 	double *mgxi0 = malloc(eg_size * sizeof(double));
@@ -44,7 +53,6 @@ void sanm_inner(TNSOL *tn)
 	double *Ggxj = malloc(eg_size * sizeof(double));
 	double *Hgxi = malloc(eg_size * sizeof(double));
 	double *Hgxj = malloc(eg_size * sizeof(double));
-
 	for(size_t g=0; g<eg_size; ++g){
 		dgxi[g] = 2.0*Dgi[g] / dui;
 		dgxj[g] = 2.0*Dgj[g] / duj;
@@ -70,6 +78,7 @@ void sanm_inner(TNSOL *tn)
     		Hgxj[g] = (alpha_gxj[g]*cosh(alpha_gxj[g])-mgxj1[g])/(sinh(alpha_gxj[g])-mgxj1[g]);
 	}
 	// agi2
+	{
 	MAT *A = mat_create(eg_size);
 	for(size_t g=0; g<eg_size; ++g)
 		for(size_t from_g=0; from_g<eg_size; ++from_g){
@@ -85,13 +94,16 @@ void sanm_inner(TNSOL *tn)
 		vec_set(b, g, val);
 	}
 	VEC *x = vec_create(eg_size);
-	gauss_seidel(x, A, b, INT_MAX);
+	LU_solve(x, A, b);
 	for(size_t g=0; g<eg_size; ++g)
 		agi2[g] = vec_get(x, g);
 	vec_free(x);
 	vec_free(b);
 	mat_free(A);
+	}
+	
 	// agj2
+	{
 	MAT *A = mat_create(eg_size);
 	for(size_t g=0; g<eg_size; ++g)
 		for(size_t from_g=0; from_g<eg_size; ++from_g){
@@ -107,30 +119,32 @@ void sanm_inner(TNSOL *tn)
 		vec_set(b, g, val);
 	}
 	VEC *x = vec_create(eg_size);
-	gauss_seidel(x, A, b, INT_MAX);
+	LU_solve(x, A, b);
 	for(size_t g=0; g<eg_size; ++g)
 		agj2[g] = vec_get(x, g);
 	vec_free(x);
 	vec_free(b);
 	mat_free(A);
+	}
 	// agi4
 	for(size_t g=0; g<eg_size; ++g){
-		double agi4[g] = 0.0;
+		agi4[g] = 0.0;
 		for(size_t from_g=0; from_g<eg_size; ++from_g)
-			agi4[g] = cal_bgk(g,from_g,Dgi,srgi,chigi,ssgi,vsfgi,keff)*agi2[from_g];
+			agi4[g] += cal_bgk(g,from_g,Dgi,srgi,chigi,ssgi,vsfgi,keff)*agi2[from_g];
 		agi4[g] += lgi2[g];
 		agi4[g] *= Cgxi[g];
 	}
 	// agj4
 	for(size_t g=0; g<eg_size; ++g){
-		double agj4[g] = 0.0;
+		agj4[g] = 0.0;
 		for(size_t from_g=0; from_g<eg_size; ++from_g)
-			agj4[g] = cal_bgk(g,from_g,Dgj,srgj,chigj,ssgj,vsfgj,keff)*agj2[from_g];
+			agj4[g] += cal_bgk(g,from_g,Dgj,srgj,chigj,ssgj,vsfgj,keff)*agj2[from_g];
 		agj4[g] += lgj2[g];
 		agj4[g] *= Cgxj[g];
 	}
 	// agi1, agj1
 	// block[0][0]
+	{
 	MAT *A = mat_create(2 * eg_size);
 	for(size_t g=0; g<eg_size; ++g)
 		for(size_t from_g=0; from_g<eg_size; ++from_g){
@@ -155,7 +169,7 @@ void sanm_inner(TNSOL *tn)
 			double val = adfgj[g] * (delta_func(g,from_g)+Agxj[g]*cal_bgk(g,from_g,Dgj,srgj,chigj,ssgj,vsfgj,keff));
 			mat_set(A, g+eg_size, from_g+eg_size, val);
 		}
-	VEC *b = vec_create(eg_size);
+	VEC *b = vec_create(2 * eg_size);
 	for(size_t g=0; g<eg_size; ++g){
 		double val = dgxi[g] * (3.0*agi2[g] + Ggxi[g]*agi4[g] + Fgxi[g]*lgi1[g]) + dgxj[g] * (3.0*agj2[g] + Ggxj[g]*agj4[g] - Fgxj[g]*lgj1[g]);
 		vec_set(b, g, val);
@@ -164,8 +178,8 @@ void sanm_inner(TNSOL *tn)
 		double val = (-adfgi[g]) * (phigi[g] + agi2[g] + agi4[g] + Agxi[g]*lgi1[g]) + adfgj[g] * (phigj[g] + agj2[g] + agj4[g] - Agxj[g]*lgj1[g]);
 		vec_set(b, g+eg_size, val);
 	}
-	VEC *x = vec_create(eg_size);
-	gauss_seidel(x, A, b, INT_MAX);
+	VEC *x = vec_create(2 * eg_size);
+	LU_solve(x, A, b);
 	for(size_t g=0; g<eg_size; ++g){
 		agi1[g] = vec_get(x, g);
 		agj1[g] = vec_get(x, g+eg_size);
@@ -173,19 +187,20 @@ void sanm_inner(TNSOL *tn)
 	vec_free(x);
 	vec_free(b);
 	mat_free(A);
+	}
 	// agi3
 	for(size_t g=0; g<eg_size; ++g){
-		double agi3[g] = 0.0;
+		agi3[g] = 0.0;
 		for(size_t from_g=0; from_g<eg_size; ++from_g)
-			agi3[g] = cal_bgk(g,from_g,Dgi,srgi,chigi,ssgi,vsfgi,keff)*agi1[from_g];
+			agi3[g] += cal_bgk(g,from_g,Dgi,srgi,chigi,ssgi,vsfgi,keff)*agi1[from_g];
 		agi3[g] += lgi1[g];
 		agi3[g] *= Agxi[g];
 	}
 	// agj3
 	for(size_t g=0; g<eg_size; ++g){
-		double agj3[g] = 0.0;
+		agj3[g] = 0.0;
 		for(size_t from_g=0; from_g<eg_size; ++from_g)
-			agj3[g] = cal_bgk(g,from_g,Dgj,srgj,chigj,ssgj,vsfgj,keff)*agj1[from_g];
+			agj3[g] += cal_bgk(g,from_g,Dgj,srgj,chigj,ssgj,vsfgj,keff)*agj1[from_g];
 		agj3[g] += lgj1[g];
 		agj3[g] *= Agxj[g];
 	}
