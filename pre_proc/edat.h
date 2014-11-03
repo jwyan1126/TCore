@@ -40,7 +40,11 @@ void edat4_set_zrval(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, double 
 
 void edat4_copy(EDAT4 *tar_dat, const EDAT4 *src_dat);
 
-void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream);
+void edat4_fprintf(const EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream);
+
+void edat4_xfprintf(const EDAT4 *dat, FILE *stream);
+void edat4_yfprintf(const EDAT4 *dat, FILE *stream);
+void edat4_zfprintf(const EDAT4 *dat, FILE *stream);
 
 void edat4_set_rand(EDAT4 *dat);
 

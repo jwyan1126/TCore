@@ -289,7 +289,7 @@ void edat4_copy(EDAT4 *tar_dat, const EDAT4 *src_dat)
 	tar_dat->zchecker = src_dat->zchecker;
 }
 
-void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream)
+void edat4_fprintf(const EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *stream)
 {
 	fprintf(stream, "EG=%4zd\tX=%4zd\tY=%4zd\tZ=%4zd\n",g,i,j,k);
 	fprintf(stream, "XL\t\tXR\t\tYL\t\tYR\t\tZL\t\tZR\n");
@@ -308,6 +308,64 @@ void edat4_fprintf(EDAT4 *dat, size_t g, size_t i, size_t j, size_t k, FILE *str
 			(dat->ychecker[i][k][j+1] & 0b0100) != 0,
 			(dat->zchecker[j][i][k] & 0b0010) != 0,
 			(dat->zchecker[j][i][k+1] & 0b0100) != 0);
+}
+
+void edat4_xfprintf(const EDAT4 *dat, FILE *stream)
+{
+	size_t eg_size = dat->gsize;
+	size_t xm_size = dat->xsize;
+	size_t ym_size = dat->ysize;
+	size_t zm_size = dat->zsize;
+	for(size_t g=0; g<eg_size; ++g){
+		fprintf(stream, "EG=%zd\n", g);
+		for(size_t i=0; i<xm_size+1; ++i){
+			fprintf(stream, "i=%zd\n", i);
+			for(size_t j=0; j<ym_size; ++j){
+				for(size_t k=0; k<zm_size; ++k)
+					fprintf(stream, "%g\t", dat->xdata[k][j][i][g]);
+				fprintf(stream, "\n");
+			}
+		}
+	}
+}
+
+void edat4_yfprintf(const EDAT4 *dat, FILE *stream)
+{
+	size_t eg_size = dat->gsize;
+	size_t xm_size = dat->xsize;
+	size_t ym_size = dat->ysize;
+	size_t zm_size = dat->zsize;
+	for(size_t g=0; g<eg_size; ++g){
+		fprintf(stream, "EG=%zd\n", g);
+		for(size_t j=0; j<ym_size+1; ++j){
+			fprintf(stream, "j=%zd\n", j);
+			for(size_t k=0; k<zm_size; ++k){
+				for(size_t i=0; i<xm_size; ++i)
+					fprintf(stream, "%g\t", dat->ydata[i][k][j][g]);
+				fprintf(stream, "\n");
+			}
+		}
+	}
+}
+
+void edat4_zfprintf(const EDAT4 *dat, FILE *stream)
+{
+	size_t eg_size = dat->gsize;
+	size_t xm_size = dat->xsize;
+	size_t ym_size = dat->ysize;
+	size_t zm_size = dat->zsize;
+	for(size_t g=0; g<eg_size; ++g){
+		fprintf(stream, "EG=%zd\n", g);
+		for(size_t k=0; k<zm_size+1; ++k){
+			fprintf(stream, "k=%zd\n", k);
+			for(size_t i=0; i<xm_size; ++i){
+				for(size_t j=0; j<ym_size; ++j)
+					fprintf(stream, "%g\t", dat->zdata[j][i][k][g]);
+				fprintf(stream, "\n");
+			}
+		}
+	}
+
 }
 
 void edat4_set_rand(EDAT4 *dat)
