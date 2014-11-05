@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include"mvop.h"
 
-int pow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
+void pow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size){
@@ -24,16 +24,17 @@ int pow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
 		//printf("Res=%g\n", res);
-		if(res < 1e-6) break;
+		if(res < 1e-5) break;
 	}
 	*lambda = val;
 	vec_free(x_last);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr ,"pow_iter NOT converged.\n");
-	return counter == max_iter_num? -1 : 0;
+		exit(-1);
+	}
 }
 
-int ipow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
+void ipow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size){
@@ -56,16 +57,17 @@ int ipow_iter(double *lambda, VEC *x, const MAT *A, int max_iter_num)
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
 		//printf("Res=%g\n", res);
-		if(res < 1e-6) break;
+		if(res < 1e-5) break;
 	}
 	*lambda = 1.0 / val;
 	vec_free(x_last);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr, "ipow_iter NOT converged.\n");
-	return counter == max_iter_num? -1 : 0;
+		exit(-1);
+	}
 }
 
-int spow_iter(double *lambda, VEC *x, const MAT *A, double sigma, int max_iter_num)
+void spow_iter(double *lambda, VEC *x, const MAT *A, double sigma, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size){
@@ -92,17 +94,18 @@ int spow_iter(double *lambda, VEC *x, const MAT *A, double sigma, int max_iter_n
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
 		//printf("Res=%g\n", res);
-		if(res < 1e-6) break;
+		if(res < 1e-5) break;
 	}
 	*lambda = 1.0 / val + sigma;
 	mat_free(sA);
 	vec_free(x_last);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr, "spow_iter NOT converged.\n");
-	return counter == max_iter_num? -1: 0;
+		exit(-1);
+	}
 }
 
-int gipow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, int max_iter_num)
+void gipow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size || x->size != B->size){
@@ -127,17 +130,18 @@ int gipow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, int max_iter_
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
 		//printf("Res=%g\n", res);
-		if(res < 1e-6) break;
+		if(res < 1e-5) break;
 	}
 	*lambda = 1.0 / val;
 	vec_free(rvec);
 	vec_free(x_last);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr, "gipow_iter NOT converged.\n");
-	return counter == max_iter_num? -1 : 0;
+		exit(-1);
+	}
 }
 
-int gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma, int max_iter_num)
+void gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size){
@@ -165,13 +169,14 @@ int gspow_iter(double *lambda, VEC *x, const MAT *A, const MAT *B, double sigma,
 		val = val_last * vec_inner_prod(x,x) / vec_inner_prod(x,x_last);
 		double res = vec_res_2norm(x,x_last);
 		//printf("Res=%g\n", res);
-		if(res < 1e-6) break;
+		if(res < 1e-5) break;
 	}
 	*lambda = 1.0 / val + sigma;
 	vec_free(rvec);
 	mat_free(sA);
 	vec_free(x_last);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr, "gspow_iter NOT converged.\n");
-	return counter == max_iter_num? -1: 0;
+		exit(-1);
+	}
 }

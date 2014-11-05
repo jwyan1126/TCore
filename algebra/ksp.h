@@ -8,13 +8,13 @@
 // b		:matrix b
 // return	: 0 when converged
 // 		: -1 when reach max iteration num
-typedef int (*MATSOLVER)(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
+typedef void (*MATSOLVER)(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
 
 // Solve Ax=b with BiCGSTAB without preconditioner
-int bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
+void bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
 
 // Solve Ax=b with gauss_seidel
-int gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
+void gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num);
 
 void LU_solve(VEC *x, const MAT *A, const VEC *b);
 

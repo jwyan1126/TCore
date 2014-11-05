@@ -25,14 +25,14 @@ void sanm_inner(TNSOL *tn)
 	double keff = tn->keff;		double *J = tn->J;
 	double *dgxi = malloc(eg_size * sizeof(double));
 	double *dgxj = malloc(eg_size * sizeof(double));
-	double *agi1 = malloc(eg_size * sizeof(double));
-	double *agj1 = malloc(eg_size * sizeof(double));
-	double *agi2 = malloc(eg_size * sizeof(double));
-	double *agj2 = malloc(eg_size * sizeof(double));
-	double *agi3 = malloc(eg_size * sizeof(double));
-	double *agj3 = malloc(eg_size * sizeof(double));
-	double *agi4 = malloc(eg_size * sizeof(double));
-	double *agj4 = malloc(eg_size * sizeof(double));
+	double *agi1 = tn->agi1;
+	double *agj1 = tn->agj1;
+	double *agi2 = tn->agi2;
+	double *agj2 = tn->agj2;
+	double *agi3 = tn->agi3;
+	double *agj3 = tn->agj3;
+	double *agi4 = tn->agi4;
+	double *agj4 = tn->agj4;
 	double *alpha_gxi = malloc(eg_size * sizeof(double));
 	double *alpha_gxj = malloc(eg_size * sizeof(double));
 	double *mgxi0 = malloc(eg_size * sizeof(double));
@@ -208,9 +208,11 @@ void sanm_inner(TNSOL *tn)
 		J[g] = -dgxi[g]*(agi1[g] + 3.0*agi2[g] + Hgxi[g]*agi3[g] + Ggxi[g]*agi4[g]);
 		#ifdef DEBUG
 		double tmp = -dgxj[g]*(agj1[g] - 3.0*agj2[g] + Hgxj[g]*agj3[g] - Ggxj[g]*agj4[g]);
+		//printf("l=%g\tr=%g\tres=%g\n", J[g],tmp,fabs(J[g]-tmp));
 		if(fabs(J[g] - tmp) > 1e-6){
-			fprintf(stderr, "SANM error.\n");
-			exit(-1);
+			fprintf(stderr, "SANM error. res = %g\n", fabs(J[g] - tmp));
+			//fprintf(stderr, "agi1=%g\tagi2=%g\tagi3=%g\tagi4=%g\n", agi1[g], agi2[g], agi3[g], agi4[g]);
+			//fprintf(stderr, "agj1=%g\tagj2=%g\tagj3=%g\tagj4=%g\n", agj1[g], agj2[g], agj3[g], agj4[g]);
 		}
 		#endif
 	}
@@ -235,14 +237,6 @@ void sanm_inner(TNSOL *tn)
 	free(mgxj2);
 	free(alpha_gxi);
 	free(alpha_gxj);
-	free(agi1);
-	free(agj1);
-	free(agi2);
-	free(agj2);
-	free(agi3);
-	free(agj3);
-	free(agi4);
-	free(agj4);
 	free(dgxi);
 	free(dgxj);
 }

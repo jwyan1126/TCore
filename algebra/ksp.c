@@ -4,7 +4,7 @@
 #include<math.h>
 #include<stddef.h>
 
-int bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
+void bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size || x->size != b->size){
@@ -54,12 +54,13 @@ int bicgstab(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
 	vec_free(v);
 	vec_free(r_hat);
 	vec_free(r);
-	if(counter == max_iter_num)
+	if(counter == max_iter_num){
 		fprintf(stderr, "BICGSTAB NOT converged.\n");
-	return counter == max_iter_num? -1 : 0;
+		exit(-1);
+	}
 }
 
-int gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
+void gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
 {
 	#ifdef DEBUG
 	if(x->size != A->size || x->size != b->size){
@@ -88,10 +89,8 @@ int gauss_seidel(VEC *x, const MAT *A, const VEC *b, int max_iter_num)
 	vec_free(x_last);
 	if(counter == max_iter_num){
 		fprintf(stderr, "GS NOT converged.\n");
-		fprintf(stderr, "A=\n");
-		mat_fprintf(A,stderr);
+		exit(-1);
 	}
-	return counter == max_iter_num? -1 : 0;
 }
 
 void LU_solve(VEC *x, const MAT *A, const VEC *b)

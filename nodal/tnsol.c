@@ -30,6 +30,14 @@ TNSOL *tnsol_create(size_t eg_size)
 	tn->adfgi = calloc(eg_size, sizeof(double));
 	tn->adfgj = calloc(eg_size, sizeof(double));
 	tn->J = calloc(eg_size, sizeof(double));
+	tn->agi1 = calloc(eg_size, sizeof(double));
+	tn->agj1 = calloc(eg_size, sizeof(double));
+	tn->agi2 = calloc(eg_size, sizeof(double));
+	tn->agj2 = calloc(eg_size, sizeof(double));
+	tn->agi3 = calloc(eg_size, sizeof(double));
+	tn->agj3 = calloc(eg_size, sizeof(double));
+	tn->agi4 = calloc(eg_size, sizeof(double));
+	tn->agj4 = calloc(eg_size, sizeof(double));
 	return tn;
 }
 
@@ -59,5 +67,22 @@ void tnsol_free(TNSOL *tn)
 	free(tn->adfgi);
 	free(tn->adfgj);
 	free(tn->J);
+	free(tn->agi1);
+	free(tn->agj1);
+	free(tn->agi2);
+	free(tn->agj2);
+	free(tn->agi3);
+	free(tn->agj3);
+	free(tn->agi4);
+	free(tn->agj4);
 	free(tn);
+}
+
+void tnsol_coef_fprintf(const TNSOL *tn, FILE *stream)
+{
+	size_t eg_size = tn->eg_size;
+	for(size_t g=0; g<eg_size; ++g){
+		fprintf(stream, "g=%zd\t%g\t%g\t%g\t%g\t%g\t%g\t%g\t%g\n",
+			g,tn->agi1[g],tn->agi2[g],tn->agi3[g],tn->agi4[g],tn->agj1[g],tn->agj2[g],tn->agj3[g],tn->agj4[g]);
+	}
 }

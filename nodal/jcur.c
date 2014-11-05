@@ -50,9 +50,12 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 						tn->adfgj[g] = cdat4_get_val(mesh->adfxl, g, i, j, k);
 					}
 				}
-				if(xchecker[k][j][i] & 0b0010){ tn->bdy = mesh->xl_bdy; sanm_left(tn); }
+				if(xchecker[k][j][i] & 0b0010){
+					tn->bdy = mesh->xl_bdy; 
+					sanm_left(tn); 
+				}
 				else if(xchecker[k][j][i] & 0b0100) { tn->bdy = mesh->xr_bdy; sanm_right(tn); }
-				else	sanm_inner(tn);
+				else	{sanm_inner(tn);}
 				for(size_t g=0; g<eg_size; ++g)
 					jcur->xdata[k][j][i][g] = tn->J[g];
 			}
@@ -97,7 +100,7 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 				}
 				if(ychecker[i][k][j] & 0b0010) { tn->bdy = mesh->yl_bdy; sanm_left(tn); }
 				else if(ychecker[i][k][j] & 0b0100) { tn->bdy = mesh->yr_bdy; sanm_right(tn); }
-				else sanm_inner(tn);
+				else	{sanm_inner(tn); }
 				for(size_t g=0; g<eg_size; ++g)
 					jcur->ydata[i][k][j][g] = tn->J[g];
 			}
@@ -142,7 +145,7 @@ void cal_jcur(EDAT4 *jcur, const MESH *mesh, const LEAK *leak, const SSOL *ssol)
 				}
 				if(zchecker[j][i][k] & 0b0010) { tn->bdy = mesh->zl_bdy; sanm_left(tn); }
 				else if(zchecker[j][i][k] & 0b0100) { tn->bdy = mesh->zr_bdy; sanm_right(tn); }
-				else sanm_inner(tn);
+				else	{sanm_inner(tn); }
 				for(size_t g=0; g<eg_size; ++g)
 					jcur->zdata[j][i][k][g] = tn->J[g];
 			}

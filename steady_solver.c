@@ -21,6 +21,7 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	EDAT4 *Jn = edat4_create(mapper);
 	LEAK *leak = leak_create(mapper);
 	VEC *phi = vec_ref_create(eg_size * rt_size, ssol->flux->data);
+	vec_normalize(phi);
 	VEC *phi_last = vec_create(eg_size * rt_size);
 	
 	cal_DFDM(DFDM, mesh);
@@ -28,13 +29,16 @@ void steady_solver(SSOL *ssol, SCONF *sconf, MAPPER *mapper, const MESH *mesh)
 	cal_F(F, sconf, mapper, mesh);
 	double res = 1.0;
 	int counter = 0;
-	while(res > 1e-6){
+	//while(res > 1e-6){
+	for(int ggg =0; ggg < 10000; ++ggg){
 		cal_M(M, DFDM, DNOD, mapper, mesh);
 		mat_adds(M, S, -1.0);
 		double k;
 		vec_copy(phi_last, phi);
-		gspow_iter(&k, phi, M, F, 0.0, 512);
-		res = vec_res_2norm(phi, phi_last);
+		gspow_iter(&k, phi, M, F, 0.0, 4096);
+		vec_abs(phi);
+		vec_normalize(phi);
+		res = vec_res_2norm(phi_last, phi);
 		counter++;
 		ssol->keff = 1.0 / k;
 		printf("nonlinear iter = %d\tres = %g\tkeff = %g\n", counter, res, ssol->keff);
