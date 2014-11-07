@@ -29,6 +29,14 @@ typedef struct
 
 	int ***mtrl_set;
 	MTRLLIB *mtrllib;
+
+	//transient setting
+	size_t pcs_size;
+	double *nvel;
+	double *lambdas;
+	double *betas;
+	double tau;
+	int steps;
 } INPUT;
 
 INPUT *input_create(const char *path);

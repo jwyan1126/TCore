@@ -15,6 +15,8 @@ MESH *mesh_create(SCONF *sconf, MAPPER *mapper)
 	mesh->xm_mesh_size = xm_mesh_size;
 	mesh->ym_mesh_size = ym_mesh_size;
 	mesh->zm_mesh_size = zm_mesh_size;
+	mesh->rt_size = mapper->rt_size;
+	mesh->mapper = mapper;
 	mesh->xl_bdy = sconf->xl_bdy;
 	mesh->xr_bdy = sconf->xr_bdy;
 	mesh->yl_bdy = sconf->yl_bdy;

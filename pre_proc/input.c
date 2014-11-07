@@ -6,8 +6,8 @@ INPUT *input_create(const char *path)
 	INPUT *input = malloc(sizeof(INPUT));
 	// test
 	size_t eg_size = 2;
-	size_t xm_span_size = 2;
-	size_t ym_span_size = 1;
+	size_t xm_span_size = 3;
+	size_t ym_span_size = 3;
 	size_t zm_span_size = 1;
 	input->eg_size = eg_size;
 	input->xm_span_size = xm_span_size;
@@ -20,9 +20,9 @@ INPUT *input_create(const char *path)
 	input->yspan_subdiv = calloc(ym_span_size, sizeof(size_t));
 	input->zspan_subdiv = calloc(zm_span_size, sizeof(size_t));
 
-	input->xl_bdy = 1;
+	input->xl_bdy = 0;
 	input->xr_bdy = 1;
-	input->yl_bdy = 1;
+	input->yl_bdy = 0;
 	input->yr_bdy = 1;
 	input->zl_bdy = 0;
 	input->zr_bdy = 0;
@@ -34,21 +34,34 @@ INPUT *input_create(const char *path)
 			input->mtrl_set[i][j] = calloc(input->zm_span_size, sizeof(int));
 	}
 
-	input->mtrl_set[0][0][0] = 1;
+	input->mtrl_set[0][0][0] = 3;
 	input->mtrl_set[1][0][0] = 2;
+	input->mtrl_set[2][0][0] = 3;
 
-	for(size_t i=0; i<xm_span_size; ++i){
-		input->xspan_len[i] = 8.0;
-		input->xspan_subdiv[i] = 1;
-	}
-	for(size_t j=0; j<ym_span_size; ++j){
-		input->yspan_len[j] = 8.0;
-		input->yspan_subdiv[j] = 1;
-	}
-	for(size_t k=0; k<zm_span_size; ++k){
-		input->zspan_len[k] = 1.0;
-		input->zspan_subdiv[k] = 1;
-	}
+	input->mtrl_set[0][1][0] = 2;
+	input->mtrl_set[1][1][0] = 1;
+	input->mtrl_set[2][1][0] = 3;
+
+	input->mtrl_set[0][2][0] = 3;
+	input->mtrl_set[1][2][0] = 3;
+	input->mtrl_set[2][2][0] = 3;
+
+	input->xspan_len[0] = 24.0;
+	input->xspan_len[1] = 32.0;
+	input->xspan_len[2] = 24.0;
+	input->xspan_subdiv[0] = 3;
+	input->xspan_subdiv[1] = 4;
+	input->xspan_subdiv[2] = 3;
+
+	input->yspan_len[0] = 24.0;
+	input->yspan_len[1] = 32.0;
+	input->yspan_len[2] = 24.0;
+	input->yspan_subdiv[0] = 3;
+	input->yspan_subdiv[1] = 4;
+	input->yspan_subdiv[2] = 3;
+
+	input->zspan_len[0] = 1.0;
+	input->zspan_subdiv[0] = 1;
 
 	input->mtrllib = mtrllib_create();
 	double *chi = calloc(eg_size,sizeof(double));
@@ -64,26 +77,35 @@ INPUT *input_create(const char *path)
 	double *adfzr = calloc(eg_size,sizeof(double));
 	for(size_t i=0; i<eg_size; ++i)
 		ss[i] = calloc(eg_size,sizeof(double));
+
 	chi[0] = 1.0; chi[1] = 0.0;
-	dcoef[0] = 1.3; dcoef[1] = 0.4;
-	sa[0] = 0.01; sa[1] = 0.12;
-	vsf[0] = 0.007; vsf[1] = 0.14;
-	ss[1][0] = 0.015;
+	dcoef[0] = 1.4; dcoef[1] = 0.4;
+	sa[0] = 0.01; sa[1] = 0.15;
+	vsf[0] = 0.007; vsf[1] = 0.2;
+	ss[1][0] = 0.01;
 	adfxr[0] = 1.0; adfxr[1] = 1.0;
 	adfyr[0] = 1.0; adfyr[1] = 1.0;
 	adfxl[0] = 1.0; adfxl[1] = 1.0;
 	adfyl[0] = 1.0; adfyl[1] = 1.0;
 	MTRL *m1 = mtrl_create(1,eg_size,chi,dcoef,sa,vsf,ss,adfxl,adfxr,adfyl,adfyr,NULL,NULL);
+
 	chi[0] = 1.0; chi[1] = 0.0;
 	dcoef[0] = 1.4; dcoef[1] = 0.4;
-	sa[0] = 0.009; sa[1] = 0.09;
-	vsf[0] = 0.0065; vsf[1] = 0.13;
-	ss[1][0] = 0.02;
+	sa[0] = 0.01; sa[1] = 0.15;
+	vsf[0] = 0.007; vsf[1] = 0.2;
+	ss[1][0] = 0.01;
 	adfxr[0] = 1.0; adfxr[1] = 1.0;
 	adfyr[0] = 1.0; adfyr[1] = 1.0;
 	adfxl[0] = 1.0; adfxl[1] = 1.0;
 	adfyl[0] = 1.0; adfyl[1] = 1.0;
 	MTRL *m2 = mtrl_create(2,eg_size,chi,dcoef,sa,vsf,ss,adfxl,adfxr,adfyl,adfyr,NULL,NULL);
+
+	chi[0] = 1.0; chi[1] = 0.0;
+	dcoef[0] = 1.3; dcoef[1] = 0.5;
+	sa[0] = 0.008; sa[1] = 0.05;
+	vsf[0] = 0.003; vsf[1] = 0.06;
+	ss[1][0] = 0.01;
+	MTRL *m3 = mtrl_create(3,eg_size,chi,dcoef,sa,vsf,ss,NULL,NULL,NULL,NULL,NULL,NULL);
 	free(adfxl);
 	free(adfxr);
 	free(adfyl);
@@ -99,9 +121,21 @@ INPUT *input_create(const char *path)
 	free(ss);
 	mtrllib_add(input->mtrllib, m1);
 	mtrllib_add(input->mtrllib, m2);
+	mtrllib_add(input->mtrllib, m3);
+
+	// transient setting
+	size_t pcs_size = 1;
+	input->pcs_size = pcs_size;
+	input->nvel = malloc(eg_size * sizeof(double));
+	input->lambdas = malloc(pcs_size * sizeof(double));
+	input->betas = malloc(pcs_size * sizeof(double));
+	input->nvel[0] = 1.0e7;
+	input->nvel[1] = 2.0e5;
+	input->lambdas[0] = 0.08;
+	input->betas[0] = 0.0075;
+	input->tau = 0.01;
+	input->steps = 20;
 	
-	
-	// ...
 	return input;
 }
 
@@ -119,6 +153,9 @@ void input_free(INPUT *input)
 		free(input->mtrl_set[i]);
 	}
 	free(input->mtrl_set);
+	free(input->nvel);
+	free(input->lambdas);
+	free(input->betas);
 	free(input);
 }
 

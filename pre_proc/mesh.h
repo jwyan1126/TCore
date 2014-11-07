@@ -12,6 +12,8 @@ typedef struct
 	size_t xm_mesh_size;
 	size_t ym_mesh_size;
 	size_t zm_mesh_size;
+	size_t rt_size;
+	MAPPER *mapper;
 	int ***cchecker;
 	int ***xchecker;
 	int ***ychecker;

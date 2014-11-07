@@ -22,7 +22,7 @@ void flux_free(FLUX *flux)
 	free(flux);
 }
 
-void flux_copy(FLUX *tar_flux, FLUX *src_flux)
+void flux_copy(FLUX *tar_flux, const FLUX *src_flux)
 {
 	#ifdef DEBUG
 	if(tar_flux->eg_size != src_flux->eg_size ||
@@ -105,4 +105,12 @@ double flux_get_val(FLUX *flux, size_t g, size_t i, size_t j, size_t k)
 	size_t rt_size = flux->rt_size;
 	size_t idx = g*rt_size + mapper_get1Didx(flux->mapper, i, j, k);
 	return flux->data[idx];
+}
+
+double flux_sumup(const FLUX *flux)
+{
+	double s = 0.0;
+	for(size_t r=0; r<flux->rt_size; ++r)
+		s += flux->data[r];
+	return s;
 }

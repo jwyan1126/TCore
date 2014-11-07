@@ -1,10 +1,12 @@
-PRE = input.o list.o mtrl.o mtrllib.o sconf.o mapper.o mesh.o cdat.o edat.o checker.o
+PRE = input.o list.o mtrl.o mtrllib.o sconf.o tconf.o mapper.o mesh.o cdat.o edat.o checker.o
 pre_proc.a($(PRE)): $(PRE)
 	ar rc pre_proc.a $(PRE)
 input.o: input.h input.c
 	cc -g -c -Wall -std=c99 input.h input.c -DDEBUG
 sconf.o: sconf.h sconf.c
 	cc -g -c -Wall -std=c99 sconf.h sconf.c -DDEBUG
+tconf.o: tconf.h tconf.c
+	cc -g -c -Wall -std=c99 tconf.h tconf.c -DDEBUG
 mapper.o: mapper.h mapper.c
 	cc -g -c -Wall -std=c99 mapper.h mapper.c -DDEBUG
 list.o: list.h list.c

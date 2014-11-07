@@ -122,9 +122,20 @@ INPUT *input_create(const char *path)
 	mtrllib_add(input->mtrllib, m1);
 	mtrllib_add(input->mtrllib, m2);
 	mtrllib_add(input->mtrllib, m3);
+
+	// transient setting
+	size_t pcs_size = 1;
+	input->pcs_size = pcs_size;
+	input->nvel = malloc(eg_size * sizeof(double));
+	input->lambdas = malloc(pcs_size * sizeof(double));
+	input->betas = malloc(pcs_size * sizeof(double));
+	input->nvel[0] = 1.0e7;
+	input->nvel[1] = 2.0e5;
+	input->lambdas[0] = 0.08;
+	input->betas[0] = 0.0075;
+	input->tau = 0.1;
+	input->steps = 100;
 	
-	
-	// ...
 	return input;
 }
 
@@ -142,6 +153,9 @@ void input_free(INPUT *input)
 		free(input->mtrl_set[i]);
 	}
 	free(input->mtrl_set);
+	free(input->nvel);
+	free(input->lambdas);
+	free(input->betas);
 	free(input);
 }
 
