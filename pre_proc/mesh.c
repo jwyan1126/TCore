@@ -326,9 +326,10 @@ inline double mesh_get_adfzr(const MESH *mesh, size_t g, size_t i, size_t j, siz
 	return cdat4_get_val(mesh->adfzr, g, i, j, k);
 }
 
-void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream)
+void mesh_fprintf(const MESH *mesh, FILE *stream)
 {
 	size_t eg_size = mesh->eg_size;
+	MAPPER *mapper = mesh->mapper;
 	size_t rt_size = mapper->rt_size;
 	fprintf(stream, "1DID\t3DXID\t3DYID\t3DZID\tMTRL_ID\tDX\tDY\tDZ\tXPOS\tYPOS\tZPOS\tXL\tXR\tYL\tYR\tZL\tZR\n");
 	for(size_t i=0; i< rt_size; ++i){

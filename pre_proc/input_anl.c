@@ -125,7 +125,7 @@ INPUT *input_create(const char *path)
 	input->betas[3] = 0.00296;
 	input->betas[4] = 0.00086;
 	input->betas[5] = 0.00032;
-	input->tau = 0.01;
+	input->tau = 0.1;
 	input->steps = 100;
 	return input;
 }

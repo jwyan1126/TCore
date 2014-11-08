@@ -7,7 +7,9 @@ void cal_m(MAT *M, EDAT4 *DFDM, EDAT4 *DNOD, const MAPPER *mapper, const MESH *m
 	CDAT3 *dx = mesh->dx;
 	CDAT3 *dy = mesh->dy;
 	CDAT3 *dz = mesh->dz;
-	CDAT4 *sr = (sr_rvs == NULL) ? mesh->sr : sr_rvs;
+	CDAT4 *sr;
+	if(sr_rvs == NULL) sr = mesh->sr;
+	else sr = sr_rvs;
 	CDAT4 *adfxl = mesh->adfxl;
 	CDAT4 *adfxr = mesh->adfxr;
 	CDAT4 *adfyl = mesh->adfyl;

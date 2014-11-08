@@ -22,29 +22,32 @@ int main()
 	mat_solver = bicgstab;
 	INPUT *input = input_create(NULL);
 	SCONF *sconf = sconf_create(input);
+	TCONF *tconf = tconf_create(input);
 	MAPPER *mapper = mapper_create(sconf);
 	MESH *mesh = mesh_create(sconf, mapper);
-	SSOL *ssol = ssol_create(mapper);
-	POWER *power = power_create(mapper);
-	steady_state_cal(ssol, sconf, mapper, mesh);
-	printf("steady calculation finished.\n");
-	printf("keff = %g\n", ssol->keff);
-	adjust_vsf(mesh->vsf, ssol->keff);
-	flux_normalize(ssol->flux);
-	TCONF *tconf = tconf_create(input);
-	TSOL *tsol = tsol_create(tconf, mesh, ssol);
+	FLUX *flux = flux_create(mapper);
+	PCS *pcs = pcs_create(tconf->pcs_size, mapper);
+	double keff = steady_state_cal(flux, sconf, mapper, mesh);
+	flux_normalize(flux);
+	printf("Steady cal. finished. keff = %g\n", keff);
+	adjust_vsf(mesh->vsf, keff);
+	pcs_init(pcs, flux, mesh, tconf);
 	int steps = tconf->steps;
+	double tau = tconf->tau;
+	CDAT4 *vsf_lst = cdat4_create(mapper);
+	double cur_time = 0.0;
 	for(int step = 0; step < steps; ++step){
+		cur_time += tau;
+		cdat4_copy(vsf_lst, mesh->vsf);
 		cross_section_update(mesh);
-		next_step_cal(tsol, tconf, mapper, mesh);
-		//power_cal(power, tsol->flux, mesh->vsf);
-		printf("%g\n", flux_sumup(tsol->flux));
+		next_step_cal(flux, pcs, tconf, mapper, mesh, vsf_lst);
+		printf("%g\n",flux_sumup(flux));
 	}
-	
-	power_free(power);
-	tsol_free(tsol);
+
+	pcs_free(pcs);
+	flux_free(flux);
+	cdat4_free(vsf_lst);
 	tconf_free(tconf);
-	ssol_free(ssol);
 	mesh_free(mesh);
 	mapper_free(mapper);
 	sconf_free(sconf);

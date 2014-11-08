@@ -12,6 +12,8 @@ FLUX *flux_create(MAPPER *mapper)
 	flux->ym_size = mapper->ym_size;
 	flux->zm_size = mapper->zm_size;
 	flux->data = calloc(rt_size * eg_size, sizeof(double));
+	for(size_t i=0; i<eg_size*rt_size; ++i)
+		flux->data[i] = 1.0;
 	flux->mapper = mapper;
 	return flux;
 }
@@ -110,7 +112,9 @@ double flux_get_val(FLUX *flux, size_t g, size_t i, size_t j, size_t k)
 double flux_sumup(const FLUX *flux)
 {
 	double s = 0.0;
-	for(size_t r=0; r<flux->rt_size; ++r)
+	size_t eg_size = flux->eg_size;
+	size_t rt_size = flux->rt_size;
+	for(size_t r=0; r<eg_size*rt_size; ++r)
 		s += flux->data[r];
 	return s;
 }

@@ -1,9 +1,11 @@
 #include"steady_solver.h"
 
-void cal_f(MAT *F, const SCONF *sconf, const MAPPER *mapper, const MESH *mesh)
+void cal_f(MAT *F, const MAPPER *mapper, const MESH *mesh, CDAT4 *chi_rvs)
 {
 	CDAT4 *vsf = mesh->vsf;
-	CDAT4 *chi = mesh->chi;
+	CDAT4 *chi;
+	if(chi_rvs == NULL) chi = mesh->chi;
+	else chi = chi_rvs;
 	mat_set_zeros(F);
 	size_t eg_size = mesh->eg_size;
 	size_t rt_size = mapper->rt_size;

@@ -87,5 +87,5 @@ double mesh_get_adfzl(const MESH *mesh, size_t g, size_t i, size_t j, size_t k);
 
 double mesh_get_adfzr(const MESH *mesh, size_t g, size_t i, size_t j, size_t k);
 
-void mesh_fprintf(const MESH *mesh, MAPPER *mapper, FILE *stream);
+void mesh_fprintf(const MESH *mesh, FILE *stream);
 #endif

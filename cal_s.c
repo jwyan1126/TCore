@@ -1,6 +1,6 @@
 #include"steady_solver.h"
 
-void cal_s(MAT *S, const SCONF *sconf, const MAPPER *mapper, const MESH *mesh)
+void cal_s(MAT *S, const MAPPER *mapper, const MESH *mesh)
 {
 	CDAT5 *ss = mesh->ss;
 	mat_set_zeros(S);
