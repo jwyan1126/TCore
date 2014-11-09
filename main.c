@@ -36,14 +36,21 @@ int main()
 	double tau = tconf->tau;
 	CDAT4 *vsf_lst = cdat4_create(mapper);
 	double cur_time = 0.0;
+	POWER *power = power_create(mapper);
+	power_cal(power, flux, mesh->vsf);
+	printf("%g\n", power_sumup(power,mesh->dx,mesh->dy,mesh->dz));
 	for(int step = 0; step < steps; ++step){
 		cur_time += tau;
 		cdat4_copy(vsf_lst, mesh->vsf);
-		cross_section_update(mesh);
+		cross_section_update(mesh, cur_time, sconf);
 		next_step_cal(flux, pcs, tconf, mapper, mesh, vsf_lst);
-		printf("%g\n",flux_sumup(flux));
+		power_cal(power, flux, mesh->vsf);
+		printf("%g\n", power_sumup(power,mesh->dx,mesh->dy,mesh->dz));
 	}
-
+	FILE *f = fopen("flux.txt","w");
+	flux_fprintf(flux,f);
+	fclose(f);
+	power_free(power);
 	pcs_free(pcs);
 	flux_free(flux);
 	cdat4_free(vsf_lst);

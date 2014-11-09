@@ -43,7 +43,8 @@ MTRL *mtrl_create(int mtrl_id,
 		mtrl->chi[g] = chi[g];
 		mtrl->dcoef[g] = dcoef[g];
 		mtrl->sa[g] = sa[g];
-		mtrl->sr[g] = sa[g];
+		for(size_t bg=0; bg<eg_size; ++bg)
+			mtrl->ss[g][bg] = ss[g][bg];
 		mtrl->vsf[g] = vsf[g];
 		mtrl->adfxl[g] = (adfxl == NULL) ? 1.0 : adfxl[g];
 		mtrl->adfxr[g] = (adfxr == NULL) ? 1.0 : adfxr[g];
@@ -51,11 +52,7 @@ MTRL *mtrl_create(int mtrl_id,
 		mtrl->adfyr[g] = (adfyr == NULL) ? 1.0 : adfyr[g];
 		mtrl->adfzl[g] = (adfzl == NULL) ? 1.0 : adfzl[g];
 		mtrl->adfzr[g] = (adfzr == NULL) ? 1.0 : adfzr[g];
-		for(size_t bg=0; bg<eg_size; ++bg){
-			mtrl->ss[g][bg] = ss[g][bg];
-			if(g != bg)
-				mtrl->sr[g] += ss[bg][g];
-		}
+		mtrl_update_sr(mtrl);
 	}
 	return mtrl;
 }
@@ -72,6 +69,18 @@ void mtrl_free(MTRL *m)
 		free(m->ss[i]);
 	free(m->ss);
 	free(m);
+}
+
+void mtrl_update_sr(MTRL *m)
+{
+	size_t eg_size = m->eg_size;
+	for(size_t g=0; g<eg_size; ++g){
+		m->sr[g] = m->sa[g];
+		for(size_t bg=0; bg<eg_size; ++bg){
+			if(g != bg)
+				m->sr[g] += m->ss[bg][g];
+		}
+	}
 }
 
 void mtrl_fprintf(const MTRL *m, FILE *stream)

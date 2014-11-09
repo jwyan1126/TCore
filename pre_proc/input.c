@@ -41,9 +41,9 @@ INPUT *input_create(const char *path)
 	input->xspan_len[0] = 40.0;
 	input->xspan_len[1] = 160.0;
 	input->xspan_len[2] = 40.0;
-	input->xspan_subdiv[0] = 1;
-	input->xspan_subdiv[1] = 4;
-	input->xspan_subdiv[2] = 1;
+	input->xspan_subdiv[0] = 10;
+	input->xspan_subdiv[1] = 40;
+	input->xspan_subdiv[2] = 10;
 
 	input->yspan_len[0] = 1.0;
 	input->yspan_subdiv[0] = 1;
@@ -125,8 +125,8 @@ INPUT *input_create(const char *path)
 	input->betas[3] = 0.00296;
 	input->betas[4] = 0.00086;
 	input->betas[5] = 0.00032;
-	input->tau = 0.01;
-	input->steps = 100;
+	input->tau = 0.001;
+	input->steps = 1000;
 	return input;
 }
 

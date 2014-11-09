@@ -38,6 +38,8 @@ MTRL *mtrl_create(int mtrl_id,
 
 void mtrl_free(MTRL *m);
 
+void mtrl_update_sr(MTRL *m);
+
 void mtrl_fprintf(const MTRL *m, FILE *stream);
 
 int mtrl_get_id(const MTRL *m);
